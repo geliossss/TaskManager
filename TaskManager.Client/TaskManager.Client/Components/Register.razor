@@ -1,0 +1,29 @@
+﻿@page "/register"
+
+<h3>Регистрация</h3>
+
+<div>
+    <label>Имя:</label>
+    <input @bind="Name" />
+</div>
+<div>
+    <label>Логин:</label>
+    <input @bind="Login" />
+</div>
+<div>
+    <label>Пароль:</label>
+    <input type="password" @bind="Password" />
+</div>
+<button @onclick="RegisterUser">Зарегистрироваться</button>
+
+@code {
+    public string Name { get; set; }
+    public string Login { get; set; }
+    public string Password { get; set; }
+
+    private void RegisterUser()
+    {
+        // позже добавим вызов API
+        Console.WriteLine($"Регистрация: {Name} / {Login}");
+    }
+}
