@@ -11,8 +11,8 @@ using TaskManager.Data.Services;
 namespace TaskManager.Client.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250613122253_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250613164800_CreateTasksTable")]
+    partial class CreateTasksTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,7 +20,7 @@ namespace TaskManager.Client.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.6");
 
-            modelBuilder.Entity("TaskManager.Data.TaskItem", b =>
+            modelBuilder.Entity("TaskManager.Data.Services.TaskItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

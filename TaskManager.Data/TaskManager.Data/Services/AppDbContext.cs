@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using TaskManager.Domain.Models;
 
-namespace TaskManager.Data
+namespace TaskManager.Data.Services
 {
     public class AppDbContext : DbContext
     {
