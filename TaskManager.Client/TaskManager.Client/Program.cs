@@ -1,5 +1,7 @@
 using TaskManager.Client.Components;
 using TaskManager.Client.Services;
+using TaskManager.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,13 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddSingleton<AuthService>();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite("Data Source=taskmanager.db"));
+
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
+
 
 var app = builder.Build();
 
