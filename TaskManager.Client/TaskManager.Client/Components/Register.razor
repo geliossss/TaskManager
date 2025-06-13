@@ -3,7 +3,6 @@
 @inject AuthService Auth
 @inject NavigationManager Nav
 
-
 <h3>Регистрация</h3>
 
 <div>
@@ -21,13 +20,14 @@
 <button @onclick="RegisterUser">Зарегистрироваться</button>
 
 @code {
-    public string Name { get; set; }
-    public string Login { get; set; }
-    public string Password { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Login { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
 
     private void RegisterUser()
     {
-        Auth.Login(Name); // сохраняем имя пользователя
-        Nav.NavigateTo("/profile"); // перенаправляем на личный кабинет
+        Console.WriteLine($"НАЖАТИЕ: {Name} / {Login} / {Password}");
+        Auth.LoginUser(Name, Login, Password);
+        Nav.NavigateTo("/profile");
     }
 }

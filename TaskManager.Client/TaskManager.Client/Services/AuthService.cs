@@ -2,19 +2,26 @@
 {
     public class AuthService
     {
-        public bool IsAuthenticated { get; private set; } = false;
-        public string UserName { get; private set; }
+        public bool IsAuthenticated { get; private set; }
 
-        public void Login(string name)
+        public string UserName { get; private set; } = string.Empty;
+        public string Login { get; private set; } = string.Empty;
+        public string Password { get; private set; } = string.Empty;
+
+        public void LoginUser(string name, string login, string password)
         {
-            UserName = name;
             IsAuthenticated = true;
+            UserName = name;
+            Login = login;
+            Password = password;
         }
 
         public void Logout()
         {
-            UserName = null;
             IsAuthenticated = false;
+            UserName = string.Empty;
+            Login = string.Empty;
+            Password = string.Empty;
         }
     }
 }
