@@ -1,0 +1,14 @@
+﻿@page "/profile"
+@using TaskManager.Client.Services
+@inject AuthService Auth
+
+<h3>Личный кабинет</h3>
+
+@if (Auth.IsAuthenticated)
+{
+    <p>Добро пожаловать, @Auth.UserName!</p>
+}
+else
+{
+    <p>Вы не авторизованы.</p>
+}

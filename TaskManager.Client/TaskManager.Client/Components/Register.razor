@@ -1,4 +1,8 @@
 ﻿@page "/register"
+@using TaskManager.Client.Services
+@inject AuthService Auth
+@inject NavigationManager Nav
+
 
 <h3>Регистрация</h3>
 
@@ -23,7 +27,7 @@
 
     private void RegisterUser()
     {
-        // позже добавим вызов API
-        Console.WriteLine($"Регистрация: {Name} / {Login}");
+        Auth.Login(Name); // сохраняем имя пользователя
+        Nav.NavigateTo("/profile"); // перенаправляем на личный кабинет
     }
 }
