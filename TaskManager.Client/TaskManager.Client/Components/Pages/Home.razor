@@ -13,6 +13,8 @@
 }
 else if (loadError != null)
 {
+    var dataSource = dbContext.Database.GetDbConnection().DataSource;
+    Console.WriteLine($"Using DB: {dataSource}");
     <p style="color:red">Ошибка загрузки: @loadError</p>
 }
 else if (tasks == null || tasks.Count == 0)
@@ -30,6 +32,7 @@ else
         </div>
     }
 }
+<p>@dataSource</p>
 
 <h3>Добавить задачу</h3>
 
@@ -54,6 +57,13 @@ else
 }
 
 @code {
+
+    private string dataSource;
+
+    protected override void OnInitialized()
+    {
+        dataSource = dbContext.Database.GetDbConnection().DataSource;
+    }
     private List<TaskItem> tasks;
     private TaskItem task = new TaskItem();
     private string? message;
@@ -76,8 +86,9 @@ else
         }
         catch (Exception ex)
         {
-            loadError = ex.Message;
+            loadError = ex.ToString();
         }
+
         isLoading = false;
     }
 

@@ -13,7 +13,8 @@ builder.Services.AddRazorComponents()
 builder.Services.AddSingleton<AuthService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=taskmanager.db"));
+    options.UseSqlite($"Data Source={Path.Combine("TaskManager.Data", "TaskManager.Data", "taskmanager.db")}");
+
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
