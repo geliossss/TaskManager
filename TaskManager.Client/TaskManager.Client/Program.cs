@@ -12,8 +12,16 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddSingleton<AuthService>();
 
+var dbPath = Path.Combine(
+    Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\..")),
+    "TaskManager.Data",
+    "TaskManager.Data",
+    "taskmanager.db"
+);
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite($"Data Source={Path.Combine("TaskManager.Data", "TaskManager.Data", "taskmanager.db")}");
+    options.UseSqlite($"Data Source={dbPath}"));
+
 
 
 builder.Services.AddRazorPages();

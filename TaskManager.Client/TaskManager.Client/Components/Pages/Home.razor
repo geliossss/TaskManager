@@ -7,14 +7,8 @@
 
 <h1>Task List</h1>
 
-@if (isLoading)
+@if (loadError != null)
 {
-    <p>Loading tasks...</p>
-}
-else if (loadError != null)
-{
-    var dataSource = dbContext.Database.GetDbConnection().DataSource;
-    Console.WriteLine($"Using DB: {dataSource}");
     <p style="color:red">Ошибка загрузки: @loadError</p>
 }
 else if (tasks == null || tasks.Count == 0)
@@ -32,7 +26,6 @@ else
         </div>
     }
 }
-<p>@dataSource</p>
 
 <h3>Добавить задачу</h3>
 
@@ -46,10 +39,6 @@ else
 
 <button @onclick="AddTask">Сохранить</button>
 
-@if (message != null)
-{
-    <p>@message</p>
-}
 
 @if (addTaskError != null)
 {
