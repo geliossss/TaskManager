@@ -1,7 +1,33 @@
 ﻿@page "/"
+@using TaskManager.Data
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext dbContext
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Task Manager</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Task List</h1>
 
-Welcome to your new app.
+@if (tasks == null)
+{
+    <p>Loading tasks...</p>
+}
+else
+{
+    @foreach (var task in tasks)
+    {
+        <div class="task">
+            <h3>@task.Title</h3>
+            <p>@task.Description</p>
+            <span>Status: @task.Status</span>
+        </div>
+    }
+}
+
+@code {
+    private List<TaskItem> tasks;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tasks = await dbContext.Tasks.ToListAsync();
+    }
+}
