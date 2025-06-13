@@ -1,16 +1,23 @@
 ﻿@page "/"
 @using TaskManager.Data
 @using Microsoft.EntityFrameworkCore
-@using TaskManager.Data.Services;
 @inject AppDbContext dbContext
 
 <PageTitle>Task Manager</PageTitle>
 
 <h1>Task List</h1>
 
-@if (tasks == null)
+@if (isLoading)
 {
     <p>Loading tasks...</p>
+}
+else if (loadError != null)
+{
+    <p style="color:red">Ошибка загрузки: @loadError</p>
+}
+else if (tasks == null || tasks.Count == 0)
+{
+    <p>Список задач пуст.</p>
 }
 else
 {
@@ -24,11 +31,80 @@ else
     }
 }
 
+<h3>Добавить задачу</h3>
+
+<input id="taskTitle" name="taskTitle" @bind="task.Title" placeholder="Название" />
+<input id="taskDescription" name="taskDescription" @bind="task.Description" placeholder="Описание" />
+<select id="taskStatus" name="taskStatus" @bind="task.Status">
+    <option>Создана</option>
+    <option>В работе</option>
+    <option>Завершена</option>
+</select>
+
+<button @onclick="AddTask">Сохранить</button>
+
+@if (message != null)
+{
+    <p>@message</p>
+}
+
+@if (addTaskError != null)
+{
+    <p style="color:red">Ошибка при добавлении: @addTaskError</p>
+}
+
 @code {
     private List<TaskItem> tasks;
+    private TaskItem task = new TaskItem();
+    private string? message;
+    private string? loadError;
+    private string? addTaskError;
+    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
-        tasks = await dbContext.Tasks.ToListAsync();
+        await LoadTasks();
+    }
+
+    private async Task LoadTasks()
+    {
+        isLoading = true;
+        loadError = null;
+        try
+        {
+            tasks = await dbContext.Tasks.ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            loadError = ex.Message;
+        }
+        isLoading = false;
+    }
+
+    private async Task AddTask()
+    {
+        message = null;
+        addTaskError = null;
+
+        if (string.IsNullOrWhiteSpace(task.Title))
+        {
+            addTaskError = "Название задачи обязательно.";
+            return;
+        }
+
+        try
+        {
+            dbContext.Tasks.Add(task);
+            await dbContext.SaveChangesAsync();
+
+            message = "Задача добавлена!";
+            task = new TaskItem();
+
+            await LoadTasks();
+        }
+        catch (Exception ex)
+        {
+            addTaskError = $"Ошибка: {ex.Message}";
+        }
     }
 }
