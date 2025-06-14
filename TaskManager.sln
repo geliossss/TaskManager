@@ -5,9 +5,9 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskManager.API", "TaskManager.API\TaskManager.API.csproj", "{4E7DD3DD-9D5C-4099-B658-C4AF295AAB6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManager.Data", "TaskManager.Data\TaskManager.Data\TaskManager.Data.csproj", "{DF177272-0D60-4F4E-8193-A756D1F64166}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskManager.Data", "TaskManager.Data\TaskManager.Data\TaskManager.Data.csproj", "{DF177272-0D60-4F4E-8193-A756D1F64166}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManager.Domain", "TaskManager.Domain\TaskManager.Domain\TaskManager.Domain.csproj", "{98E323D7-93B2-4DD3-9FB3-A094382C4AB0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskManager.Domain", "TaskManager.Domain\TaskManager.Domain\TaskManager.Domain.csproj", "{98E323D7-93B2-4DD3-9FB3-A094382C4AB0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskManager.Client", "TaskManager.Client\TaskManager.Client\TaskManager.Client.csproj", "{72CA4C99-5409-47E0-9B7E-D3354AB8B301}"
 EndProject

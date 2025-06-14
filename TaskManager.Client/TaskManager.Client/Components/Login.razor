@@ -1,0 +1,43 @@
+﻿@page "/login"
+@using TaskManager.Data
+@using TaskManager.Domain.Models
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext Db
+@inject NavigationManager Nav
+
+<h3>Вход</h3>
+
+@if (!string.IsNullOrEmpty(Message))
+{
+    <p style="color: red">@Message</p>
+}
+
+<div>
+    <label>Логин:</label>
+    <input @bind="LoginInput" />
+</div>
+<div>
+    <label>Пароль:</label>
+    <input type="password" @bind="Password" />
+</div>
+
+<button @onclick="LoginUser">Войти</button>
+
+@code {
+    private string LoginInput { get; set; } = "";
+    private string Password { get; set; } = "";
+    private string? Message;
+
+    private async Task LoginUser()
+    {
+        var user = await Db.Users.FirstOrDefaultAsync(u => u.Login == LoginInput && u.Password == Password);
+        if (user == null)
+        {
+            Message = "Неверный логин или пароль.";
+            return;
+        }
+
+        Message = $"Добро пожаловать, {user.FirstName}!";
+        Nav.NavigateTo("/profile");
+    }
+}

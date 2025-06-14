@@ -1,13 +1,28 @@
 ﻿@page "/register"
-@using TaskManager.Client.Services
-@inject AuthService Auth
+@using TaskManager.Domain.Models
+@using TaskManager.Data
+@inject AppDbContext Db
 @inject NavigationManager Nav
+@using Microsoft.EntityFrameworkCore
 
 <h3>Регистрация</h3>
 
+@if (!string.IsNullOrEmpty(Message))
+{
+    <p style="color: red">@Message</p>
+}
+
+<div>
+    <label>Фамилия:</label>
+    <input @bind="LastName" />
+</div>
 <div>
     <label>Имя:</label>
-    <input @bind="Name" />
+    <input @bind="FirstName" />
+</div>
+<div>
+    <label>Отчество:</label>
+    <input @bind="SurName" />
 </div>
 <div>
     <label>Логин:</label>
@@ -17,17 +32,40 @@
     <label>Пароль:</label>
     <input type="password" @bind="Password" />
 </div>
+
 <button @onclick="RegisterUser">Зарегистрироваться</button>
 
 @code {
-    public string Name { get; set; } = string.Empty;
-    public string Login { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
+    private string LastName { get; set; } = "";
+    private string FirstName { get; set; } = "";
+    private string SurName { get; set; } = "";
+    private string Login { get; set; } = "";
+    private string Password { get; set; } = "";
+    private string? Message { get; set; }
 
-    private void RegisterUser()
+    private async Task RegisterUser()
     {
-        Console.WriteLine($"НАЖАТИЕ: {Name} / {Login} / {Password}");
-        Auth.LoginUser(Name, Login, Password);
+        // Проверка на существующего пользователя
+        var existing = await Db.Users.FirstOrDefaultAsync(u => u.Login == Login);
+        if (existing != null)
+        {
+            Message = "Пользователь с таким логином уже существует.";
+            return;
+        }
+
+        var user = new User
+            {
+                LastName = LastName,
+                FirstName = FirstName,
+                SurName = SurName,
+                Login = Login,
+                Password = Password
+            };
+
+        Db.Users.Add(user);
+        await Db.SaveChangesAsync();
+
+        // Переход на профиль
         Nav.NavigateTo("/profile");
     }
 }
