@@ -1,10 +1,13 @@
-﻿namespace TaskManager.Domain.Models
+﻿namespace TaskManager.Domain.Models;
+
+public class User
 {
-    public class User
-    {
-        public int Id { get; set; }  // Primary Key
-        public string Name { get; set; } = string.Empty;
-        public string Login { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-    }
+    public int Id { get; set; }
+    public string LastName { get; set; } = "";
+    public string FirstName { get; set; } = "";
+    public string SurName { get; set; } = "";
+    public string Login { get; set; } = "";
+    public string Password { get; set; } = "";
+
+    public List<Comment> Comments { get; set; } = new();
 }
