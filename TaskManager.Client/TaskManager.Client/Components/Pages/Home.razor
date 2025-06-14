@@ -1,9 +1,9 @@
 ﻿@page "/"
-@using TaskManager.Data
 @using Microsoft.EntityFrameworkCore
-@using TaskStatus = TaskManager.Data.TaskStatus
+@using TaskManager.Data
+@using TaskManager.Domain.Models
+@using Status = TaskManager.Domain.Models.TaskStatus
 @inject AppDbContext dbContext
-@using TaskManager.Domain.Models;
 
 <PageTitle>Task Manager</PageTitle>
 
@@ -15,9 +15,9 @@
 }
 
 <div class="task-columns">
-    @RenderTaskColumn("Созданы", TaskStatus.Created)
-    @RenderTaskColumn("В работе", TaskStatus.InProgress)
-    @RenderTaskColumn("Выполнены", TaskStatus.Completed)
+    @RenderTaskColumn("Созданы", Status.Created)
+    @RenderTaskColumn("В работе", Status.InProgress)
+    @RenderTaskColumn("Выполнены", Status.Completed)
 </div>
 
 <h3>
@@ -30,89 +30,89 @@
         <input id="taskTitle" name="taskTitle" @bind="task.Title" placeholder="Название" />
         <input id="taskDescription" name="taskDescription" @bind="task.Description" placeholder="Описание" />
         <select id="taskStatus" name="taskStatus" @bind="task.Status">
-            <option value="@TaskStatus.Created">Создана</option>
-            <option value="@TaskStatus.InProgress">В работе</option>
-            <option value="@TaskStatus.Completed">Завершена</option>
+            <option value="@Status.Created">Создана</option>
+            <option value="@Status.InProgress">В работе</option>
+            <option value="@Status.Completed">Завершена</option>
         </select>
 
         <button @onclick="AddTask">Сохранить</button>
     </div>
 }
 
-
 @code {
-
     private bool showAddForm = false;
 
-    //Функция для отображеия формы добавления таска
     private void ToggleAddForm()
     {
         showAddForm = !showAddForm;
     }
 
-    // Функция для отображения тасков
-    RenderFragment RenderTaskColumn(string title, TaskStatus status) => __builder =>
+    RenderFragment RenderTaskColumn(string title, Status status) => __builder =>
     {
-    <div class="task-column">
-        <h3>@title</h3>
-        @foreach (var t in tasks.Where(t => t.Status == status))
-        {
-            <div class="task">
-                <p>Название: @t.Title</p>
-                <p>Описание: @t.Description</p>
-                <p>Автор: @t.User?.FirstName @t.User?.LastName</p>
-            </div>
-        }
+        <div class="task-column">
+            <h3>@title</h3>
+            @foreach (var t in tasks.Where(t => t.Status == status))
+            {
+                <div class="task">
+                    <p>Название: @t.Title</p>
+                    <p>Описание: @t.Description</p>
+                    <p>Автор: @t.User?.FirstName @t.User?.LastName</p>
+                </div>
+            }
     </div>
 ;
-};
+    };
 
-    private string dataSource;
-
-    //Функция для получения данных из бд
+    private string dataSource = "";
+    private List<TaskItem> tasks = new();
+    private TaskItem task = new();
+    private string? message;
+    private string? loadError;
+    private string? addTaskError;
+    private bool isLoading = true;
 
     protected override void OnInitialized()
     {
         dataSource = dbContext.Database.GetDbConnection().DataSource;
     }
 
-    private List<TaskItem> tasks;
-    private TaskItem task = new TaskItem();
-    private string? message;
-    private string? loadError;
-    private string? addTaskError;
-    private bool isLoading = true;
-
     protected override async Task OnInitializedAsync()
     {
         await LoadTasks();
     }
 
-    //Функция для загрузки тасков
-
     private async Task LoadTasks()
     {
-        tasks = await dbContext.Tasks
-       .Include(t => t.User)
-       .ToListAsync();
+        try
+        {
+            tasks = await dbContext.Tasks
+                .Include(t => t.User)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            loadError = ex.Message;
+        }
     }
-
-    //Функция для доавления тасков
 
     private async Task AddTask()
     {
-        dbContext.Tasks.Add(task);
-        await dbContext.SaveChangesAsync();
+        try
+        {
+            dbContext.Tasks.Add(task);
+            await dbContext.SaveChangesAsync();
 
-        message = "Задача добавлена!";
-        task = new TaskItem();
+            message = "Задача добавлена!";
+            task = new TaskItem();
 
-        await LoadTasks();
+            await LoadTasks();
+        }
+        catch (Exception ex)
+        {
+            addTaskError = ex.Message;
+        }
     }
 }
-  
-
-
 
 <style>
     .task-columns {
@@ -136,5 +136,4 @@
         border-radius: 6px;
         background-color: #fff;
     }
-
 </style>

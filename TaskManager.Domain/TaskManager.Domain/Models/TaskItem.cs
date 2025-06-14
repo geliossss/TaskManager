@@ -8,7 +8,10 @@ public class TaskItem
     public TaskStatus Status { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime? ClosedAt { get; set; }
-    public int? CommentaryId { get; set; }
+
+    // 🔽 Добавляешь вот эти две строки сюда:
+    public int? UserId { get; set; }
+    public User? User { get; set; }
 
     public List<Comment> Comments { get; set; } = new();
 }
