@@ -11,8 +11,8 @@ using TaskManager.Data;
 namespace TaskManager.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250614135133_AddUserToTaskItem")]
-    partial class AddUserToTaskItem
+    [Migration("20250614142523_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,7 +22,7 @@ namespace TaskManager.Data.Migrations
 
             modelBuilder.Entity("TaskManager.Domain.Models.Comment", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("CommentId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -39,7 +39,7 @@ namespace TaskManager.Data.Migrations
                     b.Property<int?>("UserId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("Id");
+                    b.HasKey("CommentId");
 
                     b.HasIndex("TaskItemId");
 
@@ -50,7 +50,7 @@ namespace TaskManager.Data.Migrations
 
             modelBuilder.Entity("TaskManager.Domain.Models.TaskItem", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("TaskItemId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -74,7 +74,7 @@ namespace TaskManager.Data.Migrations
                     b.Property<int?>("UserId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("Id");
+                    b.HasKey("TaskItemId");
 
                     b.HasIndex("UserId");
 
@@ -83,7 +83,7 @@ namespace TaskManager.Data.Migrations
 
             modelBuilder.Entity("TaskManager.Domain.Models.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -107,7 +107,7 @@ namespace TaskManager.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.HasKey("UserId");
 
                     b.ToTable("Users");
                 });
