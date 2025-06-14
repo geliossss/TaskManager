@@ -1,59 +1,81 @@
 ﻿@page "/"
 @using TaskManager.Data
 @using Microsoft.EntityFrameworkCore
+@using TaskStatus = TaskManager.Data.TaskStatus
 @inject AppDbContext dbContext
 @using TaskManager.Domain.Models;
 
 <PageTitle>Task Manager</PageTitle>
 
-<h1>Task List</h1>
+<h1>Задачи</h1>
 
 @if (loadError != null)
 {
     <p style="color:red">Ошибка загрузки: @loadError</p>
 }
-else if (tasks == null || tasks.Count == 0)
+
+<div class="task-columns">
+    @RenderTaskColumn("Созданы", TaskStatus.Created)
+    @RenderTaskColumn("В работе", TaskStatus.InProgress)
+    @RenderTaskColumn("Выполнены", TaskStatus.Completed)
+</div>
+
+<h3>
+    <button @onclick="ToggleAddForm">Добавить задачу</button>
+</h3>
+
+@if (showAddForm)
 {
-    <p>Список задач пуст.</p>
+    <div class="add-task-form">
+        <input id="taskTitle" name="taskTitle" @bind="task.Title" placeholder="Название" />
+        <input id="taskDescription" name="taskDescription" @bind="task.Description" placeholder="Описание" />
+        <select id="taskStatus" name="taskStatus" @bind="task.Status">
+            <option value="@TaskStatus.Created">Создана</option>
+            <option value="@TaskStatus.InProgress">В работе</option>
+            <option value="@TaskStatus.Completed">Завершена</option>
+        </select>
+
+        <button @onclick="AddTask">Сохранить</button>
+    </div>
 }
-else
-{
-    @foreach (var task in tasks)
-    {
-        <div class="task">
-            <h3>@task.Title</h3>
-            <p>@task.Description</p>
-            <span>Status: @task.Status</span>
-        </div>
-    }
-}
 
-<h3>Добавить задачу</h3>
-
-<input id="taskTitle" name="taskTitle" @bind="task.Title" placeholder="Название" />
-<input id="taskDescription" name="taskDescription" @bind="task.Description" placeholder="Описание" />
-<select id="taskStatus" name="taskStatus" @bind="task.Status">
-    <option>Создана</option>
-    <option>В работе</option>
-    <option>Завершена</option>
-</select>
-
-<button @onclick="AddTask">Сохранить</button>
-
-
-@if (addTaskError != null)
-{
-    <p style="color:red">Ошибка при добавлении: @addTaskError</p>
-}
 
 @code {
 
+    private bool showAddForm = false;
+
+    //Функция для отображеия формы добавления таска
+    private void ToggleAddForm()
+    {
+        showAddForm = !showAddForm;
+    }
+
+    // Функция для отображения тасков
+    RenderFragment RenderTaskColumn(string title, TaskStatus status) => __builder =>
+    {
+    <div class="task-column">
+        <h3>@title</h3>
+        @foreach (var t in tasks.Where(t => t.Status == status))
+        {
+            <div class="task">
+                <p>Название: @t.Title</p>
+                <p>Описание: @t.Description</p>
+                <p>Автор: @t.User?.FirstName @t.User?.LastName</p>
+            </div>
+        }
+    </div>
+;
+};
+
     private string dataSource;
+
+    //Функция для получения данных из бд
 
     protected override void OnInitialized()
     {
         dataSource = dbContext.Database.GetDbConnection().DataSource;
     }
+
     private List<TaskItem> tasks;
     private TaskItem task = new TaskItem();
     private string? message;
@@ -66,46 +88,53 @@ else
         await LoadTasks();
     }
 
+    //Функция для загрузки тасков
+
     private async Task LoadTasks()
     {
-        isLoading = true;
-        loadError = null;
-        try
-        {
-            tasks = await dbContext.Tasks.ToListAsync();
-        }
-        catch (Exception ex)
-        {
-            loadError = ex.ToString();
-        }
-
-        isLoading = false;
+        tasks = await dbContext.Tasks
+       .Include(t => t.User)
+       .ToListAsync();
     }
+
+    //Функция для доавления тасков
 
     private async Task AddTask()
     {
-        message = null;
-        addTaskError = null;
+        dbContext.Tasks.Add(task);
+        await dbContext.SaveChangesAsync();
 
-        if (string.IsNullOrWhiteSpace(task.Title))
-        {
-            addTaskError = "Название задачи обязательно.";
-            return;
-        }
+        message = "Задача добавлена!";
+        task = new TaskItem();
 
-        try
-        {
-            dbContext.Tasks.Add(task);
-            await dbContext.SaveChangesAsync();
-
-            message = "Задача добавлена!";
-            task = new TaskItem();
-
-            await LoadTasks();
-        }
-        catch (Exception ex)
-        {
-            addTaskError = $"Ошибка: {ex.Message}";
-        }
+        await LoadTasks();
     }
 }
+  
+
+
+
+<style>
+    .task-columns {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .task-column {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+
+    .task {
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        background-color: #fff;
+    }
+
+</style>
