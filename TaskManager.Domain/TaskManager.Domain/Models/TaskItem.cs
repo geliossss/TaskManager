@@ -2,14 +2,13 @@
 
 public class TaskItem
 {
-    public int Id { get; set; }
+    public int TaskItemId { get; set; }
     public string Title { get; set; } = "";
     public string Description { get; set; } = "";
     public TaskStatus Status { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime? ClosedAt { get; set; }
 
-    // 🔽 Добавляешь вот эти две строки сюда:
     public int? UserId { get; set; }
     public User? User { get; set; }
 
