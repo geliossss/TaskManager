@@ -47,21 +47,25 @@
         showAddForm = !showAddForm;
     }
 
-    RenderFragment RenderTaskColumn(string title, Status status) => __builder =>
+    RenderFragment RenderTaskColumn(string title, Status status) => @<div class="task-column">
+        <h3>@title</h3>
+        @foreach (var t in tasks.Where(t => t.Status == status))
     {
-        <div class="task-column">
-            <h3>@title</h3>
-            @foreach (var t in tasks.Where(t => t.Status == status))
-            {
-                <div class="task">
-                    <p>Название: @t.Title</p>
-                    <p>Описание: @t.Description</p>
-                    <p>Автор: @t.User?.FirstName @t.User?.LastName</p>
-                </div>
-            }
-    </div>
-;
-    };
+        <div class="task">
+            <p>Название: @t.Title</p>
+            <p>Описание: @t.Description</p>
+            <p>Дата создания: @t.CreatedAt</p>
+            <p>Автор задачи: @t.User?.FirstName @t.User?.LastName</p>
+            @foreach (var comment in t.Comments)
+        {
+            <div class="comment">
+                <p>@comment.User?.FirstName @comment.User?.LastName @comment.CreatedAt</p>
+                <p>Комментарий: @comment.Text</p>
+            </div>
+        }
+        </div>
+    }
+    </div>;
 
     private string dataSource = "";
     private List<TaskItem> tasks = new();
@@ -83,16 +87,11 @@
 
     private async Task LoadTasks()
     {
-        try
-        {
-            tasks = await dbContext.Tasks
-                .Include(t => t.User)
-                .ToListAsync();
-        }
-        catch (Exception ex)
-        {
-            loadError = ex.Message;
-        }
+        tasks = await dbContext.Tasks
+            .Include(t => t.User)
+            .Include(t => t.Comments)
+            .ThenInclude(c => c.User)
+            .ToListAsync();
     }
 
     private async Task AddTask()
@@ -136,4 +135,12 @@
         border-radius: 6px;
         background-color: #fff;
     }
-</style>
+
+    .comment {
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        background-color: #eee;
+    }
+</style> 
