@@ -15,16 +15,18 @@
     <p style="color:red">Ошибка загрузки: @loadError</p>
 }
 
+<h3>
+    <button class="btn-add-task" @onclick="ToggleAddForm">Добавить задачу</button>
+
+</h3>
+
 <div class="task-columns">
     @RenderTaskColumn("Созданы", Status.Created)
     @RenderTaskColumn("В работе", Status.InProgress)
     @RenderTaskColumn("Выполнены", Status.Completed)
 </div>
 
-<h3>
-    <button class="btn btn-primary" @onclick="ToggleAddForm">Добавить задачу</button>
 
-</h3>
 
 @if (showAddForm)
 {
@@ -69,7 +71,11 @@
     }
 
     RenderFragment RenderTaskColumn(string title, Status status) => @<div class="task-column">
-        <h3>@title</h3>
+
+        <div class="task">
+            <h3>@title</h3>
+        </div>
+        
 
         @{
             var filteredTasks = tasks.Where(t => t.Status == status).ToList();
@@ -97,38 +103,50 @@
         {
             @foreach (var t in filteredTasks)
         {
-            <div class="task">
-            @if(status!=Status.Completed){
-            <button @onclick="() => ChangeStatus(t)">Изменить статус</button>
-            }
-                <p>Название: @t.Title</p>
-                <p>Описание: @t.Description</p>
-                <p>Дата создания: @t.CreatedAt</p>
-                <p>Автор задачи: @t.User?.FirstName @t.User?.LastName</p>
-
-                @foreach (var comment in t.Comments)
-            {
-                <div class="comment">
-                    <p>@comment.User?.FirstName @comment.User?.LastName @comment.CreatedAt</p>
-                    <p>Комментарий: @comment.Text</p>
-                </div>
-            }
-
-                <button @onclick="() => ShowCommentInput(t.TaskItemId)">Добавить комментарий</button>
-
-                @if (activeCommentTaskId == t.TaskItemId)
-            {
-                <div class="add-comment">
-                    <textarea @bind="newCommentText" placeholder="Добавьте комментарий..."></textarea>
-                    <button @onclick="() => AddComment(t.TaskItemId)">Сохранить</button>
-
-                    @if (!string.IsNullOrEmpty(commentError))
+        <div class="task" >
+            <div class="task-header">
+              
+                <p class="task-title">Название: @t.Title</p>
+                @if (status == Status.Created)
                 {
-                    <p style="color:red">@commentError</p>
+                <button @onclick="() => ChangeStatus(t)" class="btn-start">Начать</button>
+
+
                 }
-                </div>
+                else if(status == Status.InProgress)
+                {
+                <button @onclick="() => ChangeStatus(t)" class="btn-complete">Завершить </button>
+                }
+            </div>
+
+            <p>Описание: @t.Description</p>
+            <p>Дата создания: @t.CreatedAt</p>
+            <p>Автор задачи: @t.User?.FirstName @t.User?.LastName</p>
+
+            @foreach (var comment in t.Comments)
+        {
+            <div class="comment">
+                <p>@comment.User?.FirstName @comment.User?.LastName @comment.CreatedAt</p>
+                <p>Комментарий: @comment.Text</p>
+            </div>
+        }
+
+            <button @onclick="() => ShowCommentInput(t.TaskItemId)" class="btn-add-comment">Добавить комментарий</button>
+
+            @if (activeCommentTaskId == t.TaskItemId)
+        {
+            <div class="add-comment">
+                <textarea @bind="newCommentText" placeholder="Добавьте комментарий..."></textarea>
+                <button @onclick="() => AddComment(t.TaskItemId)">Сохранить</button>
+
+                @if (!string.IsNullOrEmpty(commentError))
+            {
+                <p style="color:red">@commentError</p>
             }
             </div>
+        }
+        </div>
+
         }
 
        
@@ -237,57 +255,3 @@
         commentError = null;
     }
 }
-
-<style>
-    .task-columns {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-        margin-top: 20px;
-    }
-
-    .task-column {
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        padding: 10px;
-        background-color: #f9f9f9;
-    }
-
-    .task {
-        margin-bottom: 10px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        background-color: #fff;
-    }
-
-    .comment {
-        margin-bottom: 10px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        background-color: #eee;
-    }
-
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.5); 
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000; 
-    }
-
-    .modal-window {
-        background-color: white;
-        padding: 20px;
-        border-radius: 10px;
-        width: 400px;
-        box-shadow: 0 0 15px rgba(0,0,0,0.3);
-    }
-
-</style> 
