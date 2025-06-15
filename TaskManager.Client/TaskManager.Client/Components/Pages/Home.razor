@@ -3,7 +3,7 @@
 @using TaskManager.Data
 @using TaskManager.Domain.Models
 @using Status = TaskManager.Domain.Models.TaskStatus
-
+@rendermode InteractiveServer
 @inject AppDbContext dbContext
 
 <PageTitle>Task Manager</PageTitle>
@@ -22,26 +22,46 @@
 </div>
 
 <h3>
-    <button @onclick="ToggleAddForm">Добавить задачу</button>
+    <button class="btn btn-primary" @onclick="ToggleAddForm">Добавить задачу</button>
+
 </h3>
 
 @if (showAddForm)
 {
-    <div class="add-task-form">
-        <input id="taskTitle" name="taskTitle" @bind="task.Title" placeholder="Название" />
-        <input id="taskDescription" name="taskDescription" @bind="task.Description" placeholder="Описание" />
-        <select id="taskStatus" name="taskStatus" @bind="task.Status">
-            <option value="@Status.Created">Создана</option>
-            <option value="@Status.InProgress">В работе</option>
-            <option value="@Status.Completed">Завершена</option>
-        </select>
+    <div class="modal-overlay" @onclick="ToggleAddForm">
+        <div class="modal-window" @onclick:stopPropagation="true">
+            <h3>Добавить задачу</h3>
 
-        <button @onclick="AddTask">Сохранить</button>
+            <input id="taskTitle" name="taskTitle" @bind="task.Title" placeholder="Название" />
+            <input id="taskDescription" name="taskDescription" @bind="task.Description" placeholder="Описание" />
+
+            @if (!string.IsNullOrEmpty(addTaskError))
+            {
+                <p style="color:red">@addTaskError</p>
+            }
+
+            <button @onclick="AddTask">Сохранить</button>
+            <button @onclick="ToggleAddForm" style="margin-left: 10px;">Отмена</button>
+        </div>
     </div>
 }
 
+
 @code {
     private bool showAddForm = false;
+    private bool isLoading = true;
+
+    private string dataSource = "";
+    private string newCommentText = "";
+    private string? message;
+    private string? loadError;
+    private string? addTaskError;
+    private int? activeCommentTaskId = null;
+    private string? commentError;
+
+    private List<TaskItem> tasks = new();
+    private List<Comment> comments = new();
+    private TaskItem task = new();
 
     private void ToggleAddForm()
     {
@@ -50,31 +70,71 @@
 
     RenderFragment RenderTaskColumn(string title, Status status) => @<div class="task-column">
         <h3>@title</h3>
-        @foreach (var t in tasks.Where(t => t.Status == status))
-    {
-        <div class="task">
-            <p>Название: @t.Title</p>
-            <p>Описание: @t.Description</p>
-            <p>Дата создания: @t.CreatedAt</p>
-            <p>Автор задачи: @t.User?.FirstName @t.User?.LastName</p>
-            @foreach (var comment in t.Comments)
+
+        @{
+            var filteredTasks = tasks.Where(t => t.Status == status).ToList();
+        }
+
+        @if (!filteredTasks.Any())
         {
-            <div class="comment">
-                <p>@comment.User?.FirstName @comment.User?.LastName @comment.CreatedAt</p>
-                <p>Комментарий: @comment.Text</p>
+        switch (status)
+        {
+        case Status.Created:
+            <p>У вас нет запланированных задач</p>
+        ;
+        break;
+        case Status.InProgress:
+            <p>У вас нет выполняемых задач</p>
+        ;
+        break;
+        case Status.Completed:
+            <p>У вас нет завершенных задач</p>
+        ;
+        break;
+        }
+        }
+        else
+        {
+            @foreach (var t in filteredTasks)
+        {
+            <div class="task">
+            @if(status!=Status.Completed){
+            <button @onclick="() => ChangeStatus(t)">Изменить статус</button>
+            }
+                <p>Название: @t.Title</p>
+                <p>Описание: @t.Description</p>
+                <p>Дата создания: @t.CreatedAt</p>
+                <p>Автор задачи: @t.User?.FirstName @t.User?.LastName</p>
+
+                @foreach (var comment in t.Comments)
+            {
+                <div class="comment">
+                    <p>@comment.User?.FirstName @comment.User?.LastName @comment.CreatedAt</p>
+                    <p>Комментарий: @comment.Text</p>
+                </div>
+            }
+
+                <button @onclick="() => ShowCommentInput(t.TaskItemId)">Добавить комментарий</button>
+
+                @if (activeCommentTaskId == t.TaskItemId)
+            {
+                <div class="add-comment">
+                    <textarea @bind="newCommentText" placeholder="Добавьте комментарий..."></textarea>
+                    <button @onclick="() => AddComment(t.TaskItemId)">Сохранить</button>
+
+                    @if (!string.IsNullOrEmpty(commentError))
+                {
+                    <p style="color:red">@commentError</p>
+                }
+                </div>
+            }
             </div>
         }
-        </div>
-    }
-    </div>;
 
-    private string dataSource = "";
-    private List<TaskItem> tasks = new();
-    private TaskItem task = new();
-    private string? message;
-    private string? loadError;
-    private string? addTaskError;
-    private bool isLoading = true;
+       
+    }
+    </div>
+    ;
 
     protected override void OnInitialized()
     {
@@ -97,6 +157,19 @@
 
     private async Task AddTask()
     {
+        addTaskError = "";
+
+        if (string.IsNullOrWhiteSpace(task.Title))
+        {
+            addTaskError = "Название обязательно для заполнения.";
+            return;
+        }
+        if (string.IsNullOrWhiteSpace(task.Description))
+        {
+            addTaskError = "Описание обязательно для заполнения.";
+            return;
+        }
+
         try
         {
             dbContext.Tasks.Add(task);
@@ -106,11 +179,62 @@
             task = new TaskItem();
 
             await LoadTasks();
+            showAddForm = false;
         }
         catch (Exception ex)
         {
             addTaskError = ex.Message;
         }
+    }
+
+    private async Task AddComment(int taskId)
+    {
+        commentError = null;
+
+        if (string.IsNullOrWhiteSpace(newCommentText))
+        {
+            commentError = "Комментарий не может быть пустым.";
+            return;
+        }
+
+        try
+        {
+            var comment = new Comment
+                {
+                    Text = newCommentText,
+                    TaskItemId = taskId,
+                    CreatedAt = DateTime.Now,
+                };
+
+            dbContext.Comments.Add(comment);
+            await dbContext.SaveChangesAsync();
+
+            newCommentText = "";
+            activeCommentTaskId = null;
+
+            await LoadTasks(); 
+        }
+        catch (Exception ex)
+        {
+            commentError = ex.Message;
+        }
+    }
+
+    private async Task ChangeStatus(TaskItem task)
+    {
+        task.Status = (Status)(((int)task.Status + 1) % 3);
+
+        dbContext.Tasks.Update(task);
+        await dbContext.SaveChangesAsync();
+
+        await LoadTasks();
+    }
+
+    private void ShowCommentInput(int taskId)
+    {
+        activeCommentTaskId = taskId;
+        newCommentText = "";
+        commentError = null;
     }
 }
 
@@ -144,4 +268,26 @@
         border-radius: 6px;
         background-color: #eee;
     }
+
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5); 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000; 
+    }
+
+    .modal-window {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 400px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    }
+
 </style> 

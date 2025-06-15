@@ -49,7 +49,7 @@ namespace TaskManager.API.Controllers
 
             return Ok(new
             {
-                user.Id,
+                user.UserId,
                 user.FirstName,
                 user.LastName
             });
