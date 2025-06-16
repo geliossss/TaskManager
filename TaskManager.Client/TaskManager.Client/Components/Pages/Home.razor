@@ -147,8 +147,8 @@
             @if (activeCommentTaskId == t.TaskItemId)
         {
             <div class="add-comment">
-            
-            <p>Что вы думаете об этой задаче?</p>
+
+                <p>Что вы думаете об этой задаче?</p>
                 <textarea @bind="newCommentText" placeholder="Добавьте комментарий..." class="comment-input"></textarea>
                 <button @onclick="() => AddComment(t.TaskItemId)" class="save-message">Сохранить</button>
 
