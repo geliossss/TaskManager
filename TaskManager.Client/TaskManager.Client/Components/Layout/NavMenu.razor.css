@@ -77,7 +77,7 @@
     }
 
     .nav-item ::deep .nav-link:hover {
-        background: #2F876B;
+        background: linear-gradient(90deg, #5BBA5B 0%, #5988CF 100%);
         color: #DFE3E6;
     }
 
