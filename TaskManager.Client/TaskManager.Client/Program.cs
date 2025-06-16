@@ -1,4 +1,4 @@
-using TaskManager.Client.Components;
+п»їusing TaskManager.Client.Components;
 using TaskManager.Client.Services;
 using TaskManager.Data.Services;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +12,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddSingleton<AuthService>();
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:5001/") }); // или твой порт API
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:5001/") }); // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ API
 builder.Services.AddScoped<UserService>();
 
 

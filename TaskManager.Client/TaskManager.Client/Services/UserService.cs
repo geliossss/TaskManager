@@ -17,7 +17,7 @@ namespace TaskManager.Client.Services
 
         public async Task<string?> RegisterAsync(RegisterRequest request)
         {
-            var response = await _http.PostAsJsonAsync("api/users/register", request);
+            var response = await _http.PostAsJsonAsync("https://localhost:7011/api/users/register", request);
             if (response.IsSuccessStatusCode)
                 return null;
             return await response.Content.ReadAsStringAsync();
@@ -25,7 +25,7 @@ namespace TaskManager.Client.Services
 
         public async Task<User?> LoginAsync(LoginRequest request)
         {
-            var response = await _http.PostAsJsonAsync("api/users/login", request);
+            var response = await _http.PostAsJsonAsync("https://localhost:7011/api/users/login", request);
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<User>();
@@ -33,5 +33,6 @@ namespace TaskManager.Client.Services
 
             return null;
         }
+
     }
 }

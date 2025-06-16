@@ -4,8 +4,15 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Подключение базы данных
+
+var dbPath = Path.Combine(
+    Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..")),
+    "TaskManager.Data",
+    "TaskManager.Data",
+    "taskmanager.db"
+);
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=taskmanager.db"));
+    options.UseSqlite($"Data Source={dbPath}"));
 
 // Добавление контроллеров
 builder.Services.AddControllers();

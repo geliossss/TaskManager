@@ -1,9 +1,9 @@
 ﻿@page "/login"
-@using TaskManager.Domain.DTO
 @using TaskManager.Client.Services
 @inject UserService UserService
 @inject NavigationManager Nav
 @inject AuthService Auth
+@rendermode InteractiveServer
 
 <h3>Вход</h3>
 
@@ -14,30 +14,56 @@
 
 <div>
     <label>Логин:</label>
-    <input @bind="Model.Login" />
+    <input @bind="LoginInput" />
 </div>
 <div>
     <label>Пароль:</label>
-    <input type="password" @bind="Model.Password" />
+    <input type="password" @bind="PasswordInput" />
 </div>
 
 <button @onclick="LoginUser">Войти</button>
 
 @code {
-    private LoginRequest Model = new();
+    private string LoginInput = string.Empty;
+    private string PasswordInput = string.Empty;
     private string? Message;
 
     private async Task LoginUser()
     {
-        var user = await UserService.LoginAsync(Model);
-        if (user != null)
+        Console.WriteLine($"[LoginUser] Начало входа. Логин: '{LoginInput}', Пароль длиной: {PasswordInput?.Length ?? 0}");
+
+        try
         {
-            Auth.LoginUser($"{user.FirstName} {user.LastName}", user.Login, Model.Password);
-            Nav.NavigateTo("/profile");
+            var user = await UserService.LoginAsync(new()
+                {
+                    Login = LoginInput,
+                    Password = PasswordInput
+                });
+
+            if (user != null)
+            {
+                Console.WriteLine($"[LoginUser] Успешный вход. Пользователь: {user.FirstName} {user.LastName}, Логин: {user.Login}");
+                Auth.LoginUser($"{user.FirstName} {user.LastName}", user.Login, PasswordInput);
+                Nav.NavigateTo("/profile");
+            }
+            else
+            {
+                Console.WriteLine("[LoginUser] Вход неудачный: пользователь не найден или пароль неверен.");
+                Message = "Неверный логин или пароль.";
+            }
         }
-        else
+        catch (HttpRequestException httpEx)
         {
-            Message = "Неверный логин или пароль.";
+            Console.WriteLine($"[LoginUser] HttpRequestException: {httpEx.Message}");
+            Console.WriteLine(httpEx.StackTrace);
+            Message = "Ошибка связи с сервером. Проверьте соединение или адрес API.";
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[LoginUser] Неожиданная ошибка: {ex.Message}");
+            Console.WriteLine(ex.StackTrace);
+            Message = "Произошла ошибка при попытке входа.";
+        }
+
     }
 }

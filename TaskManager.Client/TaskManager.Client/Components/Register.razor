@@ -3,7 +3,7 @@
 @using TaskManager.Client.Services
 @inject UserService UserService
 @inject NavigationManager Nav
-
+@rendermode InteractiveServer
 <h3>Регистрация</h3>
 
 @if (!string.IsNullOrEmpty(Message))
@@ -40,14 +40,25 @@
 
     private async Task RegisterUser()
     {
-        var result = await UserService.RegisterAsync(Model);
-        if (result == null)
+        Console.WriteLine($"[RegisterUser] Начало регистрации. Логин: '{Model.Login}', Длина пароля: {Model.Password?.Length ?? 0}");
+        try
         {
-            Nav.NavigateTo("/login");
+            var result = await UserService.RegisterAsync(Model);
+            if (result == null)
+            {
+                Console.WriteLine("[RegisterUser] Регистрация успешна.");
+                Nav.NavigateTo("/login");
+            }
+            else
+            {
+                Console.WriteLine($"[RegisterUser] Регистрация не удалась. Сообщение: {result}");
+                Message = result;
+            }
         }
-        else
+        catch (Exception ex)
         {
-            Message = result;
+            Console.WriteLine($"[RegisterUser] Ошибка при регистрации: {ex.Message}");
+            Message = "Произошла ошибка при регистрации.";
         }
     }
 }
