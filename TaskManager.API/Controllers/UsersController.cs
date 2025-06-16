@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TaskManager.API.Models;
 using TaskManager.Data;
 using TaskManager.Domain.Models;
+using TaskManager.Domain.DTO;
+
+
 
 namespace TaskManager.API.Controllers
 {

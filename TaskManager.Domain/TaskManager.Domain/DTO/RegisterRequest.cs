@@ -1,4 +1,4 @@
-﻿namespace TaskManager.API.Models;
+﻿namespace TaskManager.Domain.DTO;
 
 public class RegisterRequest
 {

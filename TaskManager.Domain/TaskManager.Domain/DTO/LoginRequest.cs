@@ -1,5 +1,4 @@
-﻿namespace TaskManager.Client.Models;
-
+﻿namespace TaskManager.Domain.DTO;
 public class LoginRequest
 {
     public string Login { get; set; } = string.Empty;

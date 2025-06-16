@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using TaskManager.Client.Models;
+using TaskManager.Domain.DTO;
 using TaskManager.Domain.Models;
 
 namespace TaskManager.Client.Services
