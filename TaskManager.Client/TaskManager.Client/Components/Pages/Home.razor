@@ -67,6 +67,7 @@
     private void ToggleAddForm()
     {
         showAddForm = !showAddForm;
+        addTaskError = "";
     }
 
     RenderFragment RenderTaskColumn(string title, Status status) => @<div class="task-column">
@@ -101,14 +102,19 @@
             @foreach (var t in filteredTasks)
         {
         <div class="task" >
+            <p class="task-date">
+                @t.User?.FirstName @t.User?.LastName,
+                @t.CreatedAt.ToString("dd MMM", new System.Globalization.CultureInfo("ru-RU"))
+            </p>
             <div class="task-header">
+
+                
               
                 <p class="task-title"> @t.Title</p>
+
                 @if (status == Status.Created)
                 {
                 <button @onclick="() => ChangeStatus(t)" class="btn-start">Начать</button>
-
-
                 }
                 else if(status == Status.InProgress)
                 {
@@ -120,24 +126,31 @@
             </div>
 
             <p>Описание: @t.Description</p>
-            <p class="task-date"> @t.User?.FirstName @t.User?.LastName, @t.CreatedAt.ToString("dd MMM", new System.Globalization.CultureInfo("ru-RU"))</p>
-
+            
 
             @foreach (var comment in t.Comments)
         {
             <div class="comment">
-                <p>@comment.User?.FirstName @comment.User?.LastName, @comment.CreatedAt.ToString("dd MMM", new System.Globalization.CultureInfo("ru-RU"))</p>
-                <p>Комментарий: @comment.Text</p>
+                <p class="comment-author">@comment.User?.FirstName @comment.User?.LastName, 
+                @comment.CreatedAt.ToString("dd MMM", new System.Globalization.CultureInfo("ru-RU"))</p>
+                <p> @comment.Text</p>
             </div>
         }
 
-            <button @onclick="() => ShowCommentInput(t.TaskItemId)" class="btn-add-comment">Добавить комментарий</button>
+
+            @if (activeCommentTaskId != t.TaskItemId)
+        {
+            <button class="btn-add-comment" @onclick="() => ShowCommentInput(t.TaskItemId)">Добавить комментарий</button>
+        }
+
 
             @if (activeCommentTaskId == t.TaskItemId)
         {
             <div class="add-comment">
-                <textarea @bind="newCommentText" placeholder="Добавьте комментарий..."></textarea>
-                <button @onclick="() => AddComment(t.TaskItemId)">Сохранить</button>
+
+                <p>Что вы думаете об этой задаче?</p>
+                <textarea @bind="newCommentText" placeholder="Добавьте комментарий..." class="comment-input"></textarea>
+                <button @onclick="() => AddComment(t.TaskItemId)" class="save-message">Сохранить</button>
 
                 @if (!string.IsNullOrEmpty(commentError))
             {
