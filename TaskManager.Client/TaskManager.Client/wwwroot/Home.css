@@ -16,10 +16,20 @@
 .task {
     margin-bottom: 5px;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 3px solid #678785;
     border-radius: 6px;
     background-image: linear-gradient(70deg, #C5F0D4 0%, #DAE2ED 70%);
     font-size: 1.2rem;
+}
+
+p
+{
+    margin-bottom: 3px;
+}
+
+.task-date {
+    font-size: 1.1rem;
+    color: #5E7575;
 }
 
 .comment {
@@ -51,57 +61,40 @@
     box-shadow: 0 0 15px rgba(0,0,0,0.3);
 }
 
-.task button {
-    margin-bottom: 10px;
-    padding: 6px 12px;
-    border: none;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
 
 
 .btn-add-task {
     background-image: linear-gradient(70deg, #1F4866 0%, #3A7CA5 70%);
     color: white;
-    padding: 10px 20px 10px ;
+    padding: 10px 10px 10px;
     border: none;
     border-radius: 8px;
-    font-weight: 600;
-    box-shadow: 0 4px 8px rgba(31, 72, 102, 0.4);
+    font-weight: 400;
     cursor: pointer;
-    transition: background-image 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    font-size: 1.5rem;
 }
 
     .btn-add-task:hover {
-        background-image: linear-gradient(70deg, #3A7CA5 0%, #1F4866 70%);
-        box-shadow: 0 6px 12px rgba(31, 72, 102, 0.6);
-        transform: translateY(-2px);
+        background-image: linear-gradient(70deg, #32658F 0%, #4A89B0 70%);
     }
 
     .btn-add-task:active {
         transform: translateY(1px);
-        box-shadow: 0 2px 4px rgba(31, 72, 102, 0.3);
     }
 
 
 .btn-start {
     background-image: linear-gradient(70deg, #2E613A 0%, #1F4866 70%);
-    !important;
     color: white;
-    padding: 8px 18px;
+    padding: 3px 10px;
     border: none;
     border-radius: 6px;
-    font-weight: 600;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    font-weight: 400;
     cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
     .btn-start:hover {
-        background-color: #218838; 
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        background-image: linear-gradient(70deg, #4F8F5A 0%, #346F99 70%);
     }
 
     .btn-start:active {
@@ -110,42 +103,47 @@
 
 .btn-complete {
     background-image: linear-gradient(70deg, #997746 0%, #731818 70%);
-    !important;
     color: white;
-    padding: 8px 18px;
+    padding: 3px 10px;
     border: none;
     border-radius: 6px;
-    font-weight: 600;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    font-weight: 400;
     cursor: pointer;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
     .btn-complete:hover {
-        background-color: #c82333;
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        background-image: linear-gradient(70deg, #B8915A 0%, #B04343 70%);
     }
 
     .btn-complete:active {
         background-color: #bd2130;
     }
 
+.btn-completed {
+    background: #728279;
+    color: #C5D6CA;
+    padding: 3px 10px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 400;
+    cursor: default;
+}
+
+    
 
 .btn-add-comment {
-    background-color: #3A5946;
+    background-image: linear-gradient(70deg, #515E29 0%, #2A6B66 70%);
     color: white;
     padding: 6px 14px;
     border: none;
     border-radius: 6px;
-    font-weight: 500;
-    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.5);
+    font-weight: 400;
     cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
     .btn-add-comment:hover {
-        background-color: #558767;
-        box-shadow: 0 4px 8px rgba(90, 98, 104, 0.6);
+        background-image: linear-gradient(70deg, #6F8235 0%, #428F8E 70%);
     }
 
     .btn-add-comment:active {
@@ -185,4 +183,12 @@
     align-items: center;
     gap: 10px;
     justify-content: space-between;
+}
+
+.task-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 6px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }

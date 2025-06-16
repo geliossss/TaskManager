@@ -8,7 +8,6 @@
 
 <PageTitle>Task Manager</PageTitle>
 
-<h1>Задачи</h1>
 
 @if (loadError != null)
 {
@@ -72,9 +71,7 @@
 
     RenderFragment RenderTaskColumn(string title, Status status) => @<div class="task-column">
 
-        <div class="task">
             <h3>@title</h3>
-        </div>
         
 
         @{
@@ -106,7 +103,7 @@
         <div class="task" >
             <div class="task-header">
               
-                <p class="task-title">Название: @t.Title</p>
+                <p class="task-title"> @t.Title</p>
                 @if (status == Status.Created)
                 {
                 <button @onclick="() => ChangeStatus(t)" class="btn-start">Начать</button>
@@ -117,16 +114,19 @@
                 {
                 <button @onclick="() => ChangeStatus(t)" class="btn-complete">Завершить </button>
                 }
+                else{
+                <button class="btn-completed" disabled>Завершено  </button>
+                }
             </div>
 
             <p>Описание: @t.Description</p>
-            <p>Дата создания: @t.CreatedAt</p>
-            <p>Автор задачи: @t.User?.FirstName @t.User?.LastName</p>
+            <p class="task-date"> @t.User?.FirstName @t.User?.LastName, @t.CreatedAt.ToString("dd MMM", new System.Globalization.CultureInfo("ru-RU"))</p>
+
 
             @foreach (var comment in t.Comments)
         {
             <div class="comment">
-                <p>@comment.User?.FirstName @comment.User?.LastName @comment.CreatedAt</p>
+                <p>@comment.User?.FirstName @comment.User?.LastName, @comment.CreatedAt.ToString("dd MMM", new System.Globalization.CultureInfo("ru-RU"))</p>
                 <p>Комментарий: @comment.Text</p>
             </div>
         }
