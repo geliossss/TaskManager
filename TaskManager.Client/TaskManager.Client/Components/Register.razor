@@ -40,24 +40,20 @@
 
     private async Task RegisterUser()
     {
-        Console.WriteLine($"[RegisterUser] Начало регистрации. Логин: '{Model.Login}', Длина пароля: {Model.Password?.Length ?? 0}");
         try
         {
             var result = await UserService.RegisterAsync(Model);
             if (result == null)
             {
-                Console.WriteLine("[RegisterUser] Регистрация успешна.");
                 Nav.NavigateTo("/login");
             }
             else
             {
-                Console.WriteLine($"[RegisterUser] Регистрация не удалась. Сообщение: {result}");
                 Message = result;
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[RegisterUser] Ошибка при регистрации: {ex.Message}");
             Message = "Произошла ошибка при регистрации.";
         }
     }

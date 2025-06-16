@@ -30,7 +30,6 @@
 
     private async Task LoginUser()
     {
-        Console.WriteLine($"[LoginUser] Начало входа. Логин: '{LoginInput}', Пароль длиной: {PasswordInput?.Length ?? 0}");
 
         try
         {
@@ -42,26 +41,20 @@
 
             if (user != null)
             {
-                Console.WriteLine($"[LoginUser] Успешный вход. Пользователь: {user.FirstName} {user.LastName}, Логин: {user.Login}");
                 Auth.LoginUser($"{user.FirstName} {user.LastName}", user.Login, PasswordInput);
                 Nav.NavigateTo("/profile");
             }
             else
             {
-                Console.WriteLine("[LoginUser] Вход неудачный: пользователь не найден или пароль неверен.");
                 Message = "Неверный логин или пароль.";
             }
         }
         catch (HttpRequestException httpEx)
         {
-            Console.WriteLine($"[LoginUser] HttpRequestException: {httpEx.Message}");
-            Console.WriteLine(httpEx.StackTrace);
             Message = "Ошибка связи с сервером. Проверьте соединение или адрес API.";
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[LoginUser] Неожиданная ошибка: {ex.Message}");
-            Console.WriteLine(ex.StackTrace);
             Message = "Произошла ошибка при попытке входа.";
         }
 
