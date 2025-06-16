@@ -1,4 +1,6 @@
-﻿namespace TaskManager.Domain.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TaskManager.Domain.Models;
 
 public class Comment
 {

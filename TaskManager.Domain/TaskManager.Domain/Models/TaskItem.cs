@@ -1,4 +1,6 @@
-﻿namespace TaskManager.Domain.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TaskManager.Domain.Models;
 
 public class TaskItem
 {
@@ -9,7 +11,6 @@ public class TaskItem
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime? ClosedAt { get; set; }
 
-    // 🔽 Добавляешь вот эти две строки сюда:
     public int? UserId { get; set; }
     public User? User { get; set; }
 

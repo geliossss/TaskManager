@@ -47,7 +47,7 @@
 }
 
 .nav-item {
-    font-size: 0.9rem;
+    font-size: 1.4rem;
     padding-bottom: 0.5rem;
 }
 
@@ -60,10 +60,10 @@
     }
 
     .nav-item ::deep .nav-link {
-        color: #d7d7d7;
+        color: #203145;
         background: none;
         border: none;
-        border-radius: 4px;
+        border-radius: 80px;
         height: 3rem;
         display: flex;
         align-items: center;
@@ -71,15 +71,15 @@
         width: 100%;
     }
 
-.nav-item ::deep a.active {
-    background-color: rgba(255,255,255,0.37);
-    color: white;
-}
+    .nav-item ::deep a.active {
+        background: linear-gradient(90deg, #28A128 0%, #3D6AAD 100%);
+        color: #DFE3E6;
+    }
 
-.nav-item ::deep .nav-link:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: white;
-}
+    .nav-item ::deep .nav-link:hover {
+        background: #2F876B;
+        color: #DFE3E6;
+    }
 
 .nav-scrollable {
     display: none;
