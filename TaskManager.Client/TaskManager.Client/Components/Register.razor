@@ -1,9 +1,8 @@
 ﻿@page "/register"
-@using TaskManager.Domain.Models
-@using TaskManager.Data
-@inject AppDbContext Db
+@using TaskManager.Client.Models
+@using TaskManager.Client.Services
+@inject UserService UserService
 @inject NavigationManager Nav
-@using Microsoft.EntityFrameworkCore
 
 <h3>Регистрация</h3>
 
@@ -14,58 +13,41 @@
 
 <div>
     <label>Фамилия:</label>
-    <input @bind="LastName" />
+    <input @bind="Model.LastName" />
 </div>
 <div>
     <label>Имя:</label>
-    <input @bind="FirstName" />
+    <input @bind="Model.FirstName" />
 </div>
 <div>
     <label>Отчество:</label>
-    <input @bind="SurName" />
+    <input @bind="Model.SurName" />
 </div>
 <div>
     <label>Логин:</label>
-    <input @bind="Login" />
+    <input @bind="Model.Login" />
 </div>
 <div>
     <label>Пароль:</label>
-    <input type="password" @bind="Password" />
+    <input type="password" @bind="Model.Password" />
 </div>
 
 <button @onclick="RegisterUser">Зарегистрироваться</button>
 
 @code {
-    private string LastName { get; set; } = "";
-    private string FirstName { get; set; } = "";
-    private string SurName { get; set; } = "";
-    private string Login { get; set; } = "";
-    private string Password { get; set; } = "";
-    private string? Message { get; set; }
+    private RegisterRequest Model = new();
+    private string? Message;
 
     private async Task RegisterUser()
     {
-        // Проверка на существующего пользователя
-        var existing = await Db.Users.FirstOrDefaultAsync(u => u.Login == Login);
-        if (existing != null)
+        var result = await UserService.RegisterAsync(Model);
+        if (result == null)
         {
-            Message = "Пользователь с таким логином уже существует.";
-            return;
+            Nav.NavigateTo("/login");
         }
-
-        var user = new User
-            {
-                LastName = LastName,
-                FirstName = FirstName,
-                SurName = SurName,
-                Login = Login,
-                Password = Password
-            };
-
-        Db.Users.Add(user);
-        await Db.SaveChangesAsync();
-
-        // Переход на профиль
-        Nav.NavigateTo("/profile");
+        else
+        {
+            Message = result;
+        }
     }
 }

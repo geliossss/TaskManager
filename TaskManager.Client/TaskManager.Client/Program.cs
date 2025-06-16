@@ -12,6 +12,10 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddSingleton<AuthService>();
 
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:5001/") }); // или твой порт API
+builder.Services.AddScoped<UserService>();
+
+
 var dbPath = Path.Combine(
     Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\..")),
     "TaskManager.Data",

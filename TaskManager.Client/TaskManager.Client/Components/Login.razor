@@ -1,9 +1,9 @@
 ﻿@page "/login"
-@using TaskManager.Data
-@using TaskManager.Domain.Models
-@using Microsoft.EntityFrameworkCore
-@inject AppDbContext Db
+@using TaskManager.Client.Models
+@using TaskManager.Client.Services
+@inject UserService UserService
 @inject NavigationManager Nav
+@inject AuthService Auth
 
 <h3>Вход</h3>
 
@@ -14,30 +14,30 @@
 
 <div>
     <label>Логин:</label>
-    <input @bind="LoginInput" />
+    <input @bind="Model.Login" />
 </div>
 <div>
     <label>Пароль:</label>
-    <input type="password" @bind="Password" />
+    <input type="password" @bind="Model.Password" />
 </div>
 
 <button @onclick="LoginUser">Войти</button>
 
 @code {
-    private string LoginInput { get; set; } = "";
-    private string Password { get; set; } = "";
+    private LoginRequest Model = new();
     private string? Message;
 
     private async Task LoginUser()
     {
-        var user = await Db.Users.FirstOrDefaultAsync(u => u.Login == LoginInput && u.Password == Password);
-        if (user == null)
+        var user = await UserService.LoginAsync(Model);
+        if (user != null)
+        {
+            Auth.LoginUser($"{user.FirstName} {user.LastName}", user.Login, Model.Password);
+            Nav.NavigateTo("/profile");
+        }
+        else
         {
             Message = "Неверный логин или пароль.";
-            return;
         }
-
-        Message = $"Добро пожаловать, {user.FirstName}!";
-        Nav.NavigateTo("/profile");
     }
 }
