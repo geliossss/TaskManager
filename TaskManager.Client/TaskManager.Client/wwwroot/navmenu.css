@@ -1,0 +1,21 @@
+﻿.nav-item .nav-link {
+    font-size: 16px; /* Размер шрифта */
+    font-weight: bold; /* Жирное начертание */
+    color: #ffffff; /* Белый цвет текста */
+    padding: 10px 15px; /* Отступы вокруг текста */
+    text-transform: uppercase; /* Преобразование текста в верхний регистр */
+    border-radius: 5px; /* Скругление углов */
+    transition: background-color 0.3s ease; /* Плавный переход при наведении */
+}
+
+    /* Стили при наведении */
+    .nav-item .nav-link:hover {
+        background-color: #4CAF50; /* Задний фон при наведении */
+        color: white; /* Цвет текста при наведении */
+    }
+
+    /* Стили для активной ссылки */
+    .nav-item .nav-link.active {
+        background-color: #007bff; /* Фон активной кнопки */
+        color: white; /* Цвет текста для активной кнопки */
+    }
