@@ -35,7 +35,15 @@ public class TaskService
             throw new UnauthorizedAccessException("Изменять задачу может только автор");
 
         task.Status = (Status)(((int)task.Status + 1) % 3);
-        await dbContext.SaveChangesAsync();
+        if (task.Status != Status.Completed)
+        {
+            task.ClosedAt = null;
+        }
+        else
+        {
+            task.ClosedAt = DateTime.Now;
+        }
+            await dbContext.SaveChangesAsync();
     }
 
     public async Task SetCloseDateAsync(TaskItem task, int userId)
@@ -52,4 +60,23 @@ public class TaskService
         dbContext.Comments.Add(comment);
         await dbContext.SaveChangesAsync();
     }
+    public async Task UpdateTaskStatusAsync(int taskId, Status newStatus)
+    {
+        var task = await dbContext.Tasks.FindAsync(taskId);
+        if (task == null)
+            throw new Exception("Задача не найдена.");
+
+
+        task.Status = newStatus;
+        if (task.Status != Status.Completed)
+        {
+            task.ClosedAt = null;
+        }
+        else
+        {
+            task.ClosedAt = DateTime.Now;
+        }
+        await dbContext.SaveChangesAsync();
+    }
+
 }

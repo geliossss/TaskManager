@@ -278,3 +278,6 @@ p {
 
     .expand-comments-section:active {
     }
+.task-header-own {
+    border: 5px solid #678785;
+}
