@@ -1,14 +1,28 @@
 ﻿@page "/profile"
 @using TaskManager.Client.Services
 @inject AuthService Auth
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
 
 <h3>Личный кабинет</h3>
 
 @if (Auth.IsAuthenticated)
 {
     <p>Добро пожаловать, @Auth.UserName!</p>
+    <button class="btn btn-danger" @onclick="Logout">Выйти</button> <!-- Кнопка выхода -->
 }
 else
 {
     <p>Вы не авторизованы.</p>
+}
+
+@code {
+    private void Logout()
+    {
+        // Выполняем выход
+        Auth.Logout();
+
+        // Перенаправляем на страницу авторизации
+        Navigation.NavigateTo("/login");
+    }
 }
