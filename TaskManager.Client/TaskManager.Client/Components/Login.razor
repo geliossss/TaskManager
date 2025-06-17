@@ -5,23 +5,27 @@
 @inject AuthService Auth
 @rendermode InteractiveServer
 
-<h3>Вход</h3>
+<div class="login-container">
+    <div class="form-container">
+        <h3>Вход</h3>
 
-@if (!string.IsNullOrEmpty(Message))
-{
-    <p style="color: red">@Message</p>
-}
+        @if (!string.IsNullOrEmpty(Message))
+        {
+            <p class="error-message">@Message</p>
+        }
 
-<div>
-    <label>Логин:</label>
-    <input @bind="LoginInput" />
+        <div class="input-container">
+            <input @bind="LoginInput" id="login" placeholder=" " />
+            <label for="login">Логин:</label>
+        </div>
+        <div class="input-container">
+            <input type="password" @bind="PasswordInput" id="password" placeholder=" " />
+            <label for="password">Пароль:</label>
+        </div>
+
+        <button @onclick="LoginUser">Войти</button>
+    </div>
 </div>
-<div>
-    <label>Пароль:</label>
-    <input type="password" @bind="PasswordInput" />
-</div>
-
-<button @onclick="LoginUser">Войти</button>
 
 @code {
     private string LoginInput = string.Empty;
@@ -30,7 +34,6 @@
 
     private async Task LoginUser()
     {
-
         try
         {
             var user = await UserService.LoginAsync(new()
@@ -42,7 +45,6 @@
             if (user != null)
             {
                 Auth.LoginUser(user.UserId, $"{user.FirstName} {user.LastName}", user.Login, PasswordInput);
-
                 Nav.NavigateTo("/profile");
             }
             else
@@ -58,6 +60,95 @@
         {
             Message = "Произошла ошибка при попытке входа.";
         }
-
     }
 }
+
+<style>
+    /* Стили только для страницы Login */
+
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f4f4f4;
+    }
+
+    /* Контейнер формы */
+    .form-container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+        box-sizing: border-box;
+    }
+
+    h3 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* Стиль для полей ввода */
+    .input-container {
+        position: relative;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+        .input-container input {
+            width: 100%;
+            padding: 12px 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            outline: none;
+            background-color: #fff;
+            box-sizing: border-box;
+        }
+
+        /* Стиль для метки */
+        .input-container label {
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: #aaa;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        /* Когда поле получает фокус или оно не пустое */
+        .input-container input:focus + label,
+        .input-container input:not(:placeholder-shown) + label {
+            top: -10px;
+            font-size: 12px;
+            color: #4caf50;
+        }
+
+    /* Кнопка отправки */
+    button {
+        padding: 12px 20px;
+        background-color: #4caf50;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 20px;
+    }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+    /* Сообщение об ошибке */
+    .error-message {
+        color: red;
+        font-size: 1rem;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+</style>

@@ -4,35 +4,40 @@
 @inject UserService UserService
 @inject NavigationManager Nav
 @rendermode InteractiveServer
-<h3>Регистрация</h3>
 
-@if (!string.IsNullOrEmpty(Message))
-{
-    <p style="color: red">@Message</p>
-}
+<div class="register-container">
+    <div class="form-container">
+        <h3>Регистрация</h3>
 
-<div>
-    <label>Фамилия:</label>
-    <input @bind="Model.LastName" />
-</div>
-<div>
-    <label>Имя:</label>
-    <input @bind="Model.FirstName" />
-</div>
-<div>
-    <label>Отчество:</label>
-    <input @bind="Model.SurName" />
-</div>
-<div>
-    <label>Логин:</label>
-    <input @bind="Model.Login" />
-</div>
-<div>
-    <label>Пароль:</label>
-    <input type="password" @bind="Model.Password" />
-</div>
+        @if (!string.IsNullOrEmpty(Message))
+        {
+            <p class="error-message">@Message</p>
+        }
 
-<button @onclick="RegisterUser">Зарегистрироваться</button>
+        <div class="input-container">
+            <input @bind="Model.LastName" id="lastName" placeholder=" " />
+            <label for="lastName">Фамилия:</label>
+        </div>
+        <div class="input-container">
+            <input @bind="Model.FirstName" id="firstName" placeholder=" " />
+            <label for="firstName">Имя:</label>
+        </div>
+        <div class="input-container">
+            <input @bind="Model.SurName" id="surName" placeholder=" " />
+            <label for="surName">Отчество:</label>
+        </div>
+        <div class="input-container">
+            <input @bind="Model.Login" id="login" placeholder=" " />
+            <label for="login">Логин:</label>
+        </div>
+        <div class="input-container">
+            <input type="password" @bind="Model.Password" id="password" placeholder=" " />
+            <label for="password">Пароль:</label>
+        </div>
+
+        <button @onclick="RegisterUser">Зарегистрироваться</button>
+    </div>
+</div>
 
 @code {
     private RegisterRequest Model = new();
@@ -58,3 +63,93 @@
         }
     }
 }
+
+<style>
+    /* Стили только для страницы Register */
+
+    .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f4f4f4;
+    }
+
+    /* Контейнер формы */
+    .form-container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+        box-sizing: border-box;
+    }
+
+    h3 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* Стиль для полей ввода */
+    .input-container {
+        position: relative;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+        .input-container input {
+            width: 100%;
+            padding: 12px 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            outline: none;
+            background-color: #fff;
+            box-sizing: border-box;
+        }
+
+        /* Стиль для метки */
+        .input-container label {
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: #aaa;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        /* Когда поле получает фокус или оно не пустое */
+        .input-container input:focus + label,
+        .input-container input:not(:placeholder-shown) + label {
+            top: -10px;
+            font-size: 12px;
+            color: #4caf50;
+        }
+
+    /* Кнопка отправки */
+    button {
+        padding: 12px 20px;
+        background-color: #4caf50;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 20px;
+    }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+    /* Сообщение об ошибке */
+    .error-message {
+        color: red;
+        font-size: 1rem;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+</style>
