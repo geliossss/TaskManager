@@ -1,5 +1,4 @@
-﻿/* Основные стили для колонок задач */
-.task-columns {
+﻿.task-columns {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
@@ -61,20 +60,17 @@ p {
     box-shadow: 0 0 15px rgba(0,0,0,0.3);
 }
 
-/* Кнопка для добавления задачи */
+
+
 .btn-add-task {
     background-image: linear-gradient(70deg, #1F4866 0%, #3A7CA5 70%);
     color: white;
-    padding: 10px 20px; /* Изменили padding для улучшения внешнего вида */
+    padding: 10px 10px 10px;
     border: none;
     border-radius: 8px;
     font-weight: 400;
     cursor: pointer;
     font-size: 1.5rem;
-    width: 200px; /* Устанавливаем фиксированную ширину для кнопки */
-    max-width: 100%; /* Ограничиваем растягивание */
-    display: block; /* Убираем инлайн-стиль */
-    margin: 0 auto; /* Центрируем кнопку по горизонтали */
 }
 
     .btn-add-task:hover {
@@ -85,7 +81,7 @@ p {
         transform: translateY(1px);
     }
 
-/* Кнопки состояния задачи */
+
 .btn-start {
     background-image: linear-gradient(70deg, #2E613A 0%, #1F4866 70%);
     color: white;
@@ -133,7 +129,8 @@ p {
     cursor: default;
 }
 
-/* Кнопка добавления комментария */
+
+
 .btn-add-comment {
     background-image: linear-gradient(70deg, #515E29 0%, #2A6B66 70%);
     color: white;
@@ -152,7 +149,6 @@ p {
         background-color: #3A5946;
     }
 
-/* Стили для поля ввода комментария */
 .add-comment {
     margin-top: 10px;
 }
@@ -165,6 +161,7 @@ p {
         border: 1px solid #ccc;
         margin-bottom: 5px;
         resize: none;
+        !important;
     }
 
     .add-comment button {
@@ -181,13 +178,13 @@ p {
             background-color: #218838;
         }
 
-/* Стили для заголовков задач */
 .task-header {
     display: flex;
     align-items: center;
     gap: 10px;
     justify-content: space-between;
     padding-bottom: 5px;
+    ;
 }
 
 .task-title {
@@ -201,7 +198,6 @@ p {
     font-weight: 600;
 }
 
-/* Стили для сохраненной задачи */
 .save-message {
     background-image: linear-gradient(70deg, #788F51 0%, #4A8739 70%);
     color: white;
@@ -220,7 +216,6 @@ p {
         background-color: #3A5946;
     }
 
-/* Стили для ввода комментариев */
 .comment-input {
     width: 100%;
     min-height: 80px;
@@ -236,4 +231,50 @@ p {
     .comment-input:focus {
         border-color: #007BFF;
         box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
+    }
+
+
+.task-info p {
+    margin: 0;
+    line-height: 1.2;
+}
+
+.btn-delete {
+    background-image: linear-gradient(70deg, #B02E2E 0%, #99632C 70%);
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    font-size: 0.7rem;
+}
+
+    .btn-delete:hover {
+        background-image: linear-gradient(70deg, #BA4747 0%, #BA834C 70%);
+    }
+
+.description {
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.expand-comments-section {
+    background-image: linear-gradient(70deg, #736336 0%, #5B6B2A 70%);
+    color: white;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 400;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+    .expand-comments-section:hover {
+        background-image: linear-gradient(70deg, #B09856 0%, #869E3E 70%);
+    }
+
+    .expand-comments-section:active {
     }
