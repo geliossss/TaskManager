@@ -349,11 +349,12 @@
         </div>
 
         <p class="description">Описание: @task.Description</p>
-        <p class="task-date">Создано: @task.CreatedAt.ToString("dd MMM", new System.Globalization.CultureInfo("ru-RU"))</p>
+        <p class="task-date">Создано: @task.CreatedAt.ToString("dd MMM HH:mm", new System.Globalization.CultureInfo("ru-RU"))</p>
 
         @if (task.ClosedAt != null)
     {
-        <p class="task-date">Завершено: @task.ClosedAt?.ToString("dd MMM", new System.Globalization.CultureInfo("ru-RU"))</p>
+        <p class="task-date">Завершено: @task.ClosedAt?.ToString("dd MMM HH:mm", new System.Globalization.CultureInfo("ru-RU"))</p>
+
     }
 
         @if (task.Comments?.Count > 0)
@@ -370,7 +371,7 @@
             @foreach (var comment in task.Comments)
         {
             <div class="comment">
-                <p><b>@comment.User?.FirstName @comment.User?.LastName</b>, @comment.CreatedAt.ToString("dd MMM", new System.Globalization.CultureInfo("ru-RU"))</p>
+                <p><b>@comment.User?.FirstName @comment.User?.LastName</b>, @comment.CreatedAt.ToString("dd MMM HH:mm", new System.Globalization.CultureInfo("ru-RU"))</p>
                 <p>@comment.Text</p>
             </div>
         }
