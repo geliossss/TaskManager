@@ -5,6 +5,11 @@
 @using Status = TaskManager.Domain.Models.TaskStatus
 @rendermode InteractiveServer
 @inject AppDbContext dbContext
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Nav
+@using TaskManager.Client.Services
+@inject AuthService Auth
+@using System.Security.Claims
 
 <PageTitle>Task Manager</PageTitle>
 
@@ -172,10 +177,22 @@
         dataSource = dbContext.Database.GetDbConnection().DataSource;
     }
 
+
     protected override async Task OnInitializedAsync()
     {
-        await LoadTasks();
+        
+
+        if (Auth.IsAuthenticated)
+        {
+            await LoadTasks();
+        }
+        else
+        {
+            Nav.NavigateTo("/login");
+
+        }
     }
+
 
     private async Task LoadTasks()
     {
@@ -189,26 +206,29 @@
     private async Task AddTask()
     {
         addTaskError = "";
+        var userId = GetCurrentUserId();
 
-        if (string.IsNullOrWhiteSpace(task.Title))
+        if (userId == null)
         {
-            addTaskError = "Название обязательно для заполнения.";
+            addTaskError = "Пользователь не авторизован.";
             return;
         }
-        if (string.IsNullOrWhiteSpace(task.Description))
+
+        if (string.IsNullOrWhiteSpace(task.Title) || string.IsNullOrWhiteSpace(task.Description))
         {
-            addTaskError = "Описание обязательно для заполнения.";
+            addTaskError = "Название и описание обязательны.";
             return;
         }
 
         try
         {
+            task.UserId = userId.Value;
+            task.CreatedAt = DateTime.Now;
+
             dbContext.Tasks.Add(task);
             await dbContext.SaveChangesAsync();
 
-            message = "Задача добавлена!";
             task = new TaskItem();
-
             await LoadTasks();
             showAddForm = false;
         }
@@ -218,9 +238,17 @@
         }
     }
 
+
     private async Task AddComment(int taskId)
     {
         commentError = null;
+        var userId = GetCurrentUserId();
+
+        if (userId == null)
+        {
+            commentError = "Пользователь не авторизован.";
+            return;
+        }
 
         if (string.IsNullOrWhiteSpace(newCommentText))
         {
@@ -234,6 +262,7 @@
                 {
                     Text = newCommentText,
                     TaskItemId = taskId,
+                    UserId = userId.Value,
                     CreatedAt = DateTime.Now,
                 };
 
@@ -243,13 +272,14 @@
             newCommentText = "";
             activeCommentTaskId = null;
 
-            await LoadTasks(); 
+            await LoadTasks();
         }
         catch (Exception ex)
         {
             commentError = ex.Message;
         }
     }
+
 
     private async Task ChangeStatus(TaskItem task)
     {
@@ -267,4 +297,11 @@
         newCommentText = "";
         commentError = null;
     }
+
+    private int? GetCurrentUserId()
+    {
+        return Auth.IsAuthenticated ? Auth.UserId : null;
+    }
+
+
 }

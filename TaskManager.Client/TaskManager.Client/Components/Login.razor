@@ -41,7 +41,8 @@
 
             if (user != null)
             {
-                Auth.LoginUser($"{user.FirstName} {user.LastName}", user.Login, PasswordInput);
+                Auth.LoginUser(user.UserId, $"{user.FirstName} {user.LastName}", user.Login, PasswordInput);
+
                 Nav.NavigateTo("/profile");
             }
             else
