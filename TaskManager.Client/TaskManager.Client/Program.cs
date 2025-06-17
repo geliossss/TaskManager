@@ -30,6 +30,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddScoped<TaskService>();
 
 
 var app = builder.Build();

@@ -184,7 +184,7 @@ p
     align-items: center;
     gap: 10px;
     justify-content: space-between;
-    padding-bottom: 5px;
+    padding-bottom: 5px;;
 }
 
 .task-title {
@@ -232,3 +232,47 @@ p
         border-color: #007BFF;
         box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
     }
+
+
+.task-info p {
+    margin: 0;
+    line-height: 1.2;
+}
+
+.btn-delete {
+    background-image: linear-gradient(70deg, #B02E2E 0%, #99632C 70%);
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    font-size: 0.7rem;
+}
+
+    .btn-delete:hover {
+        background-image: linear-gradient(70deg, #BA4747 0%, #BA834C 70%);
+    }
+.description {
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.expand-comments-section {
+    background-image: linear-gradient(70deg, #736336 0%, #5B6B2A 70%);
+    color: white;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 400;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+    .expand-comments-section:hover {
+        background-image: linear-gradient(70deg, #B09856 0%, #869E3E 70%);
+    }
+    .expand-comments-section:active {
+    }
+
