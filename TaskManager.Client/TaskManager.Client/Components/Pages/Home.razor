@@ -2,10 +2,20 @@
 @using TaskManager.Data
 @using Microsoft.EntityFrameworkCore
 @inject AppDbContext dbContext
+<<<<<<< Updated upstream
 
 <PageTitle>Task Manager</PageTitle>
 
 <h1>Task List</h1>
+=======
+@inject AuthService Auth
+@inject NavigationManager Nav
+@inject TaskService TaskService
+
+<h3>Задачи</h3>
+
+<button class="btn-add-task" @onclick="ToggleAddForm">Добавить задачу</button>
+>>>>>>> Stashed changes
 
 @if (loadError != null)
 {
@@ -46,6 +56,13 @@ else
 }
 
 @code {
+<<<<<<< Updated upstream
+=======
+    private int draggedTaskId;
+
+    private List<TaskItem> tasks = new();
+    private TaskItem task = new();
+>>>>>>> Stashed changes
 
     private string dataSource;
 
@@ -58,7 +75,174 @@ else
     private string? message;
     private string? loadError;
     private string? addTaskError;
+<<<<<<< Updated upstream
     private bool isLoading = true;
+=======
+
+    private int? activeCommentTaskId = null;
+    private string newCommentText = "";
+    private string? commentError;
+
+    private HashSet<int> expandedComments = new();
+
+    private void ToggleAddForm()
+    {
+        showAddForm = !showAddForm;
+        addTaskError = null;
+    }
+
+    private void OnDragStart(DragEventArgs e, int taskId)
+    {
+        draggedTaskId = taskId;
+    }
+
+    private RenderFragment RenderTaskColumn(string title, Status status) => @<div class="task-column"ondragover="event.preventDefault()"
+        @ondrop="@((e) => OnTaskDrop(e, status))">
+        <h3>@title</h3>
+
+        @{
+        var filteredTasks = tasks.Where(t => t.Status == status).ToList();
+        
+
+        if (!filteredTasks.Any())
+        {
+                <p>Задач нет</p>;
+        }
+        else
+        {
+                @foreach (var task in filteredTasks)
+        {
+        if (task.UserId == GetCurrentUserId())
+        {
+                <div class="task" draggable="true"
+                     @ondragstart="(e) => OnDragStart(e, task.TaskItemId)">
+                    @RenderTaskContent(task, status)
+                </div>
+        }
+        else
+        {
+                <div class="task">
+                    @RenderTaskContent(task, status)
+                </div>
+        }
+        }
+        }
+
+    }
+    </div>;
+
+    private void ToggleComments(int taskId)
+            {
+        if (expandedComments.Contains(taskId))
+            expandedComments.Remove(taskId);
+        else
+            expandedComments.Add(taskId);
+                }
+
+    private RenderFragment RenderTaskContent(TaskItem task, Status status) => @<div>
+        <div class="task-header">
+            <div class="task-info">
+                <p class="task-date">
+                    @task.User?.FirstName @task.User?.LastName<br />
+                </p>
+            </div>
+            @if (task.UserId == GetCurrentUserId())
+        {
+            <button class="btn-delete" @onclick="() => DeleteTask(task)">Х</button>
+        }
+        </div>
+
+        <div class="task-header">
+            <p class="task-title">@task.Title</p>
+
+            @if (task.UserId == GetCurrentUserId())
+        {
+        if (status == Status.Created)
+        {
+            <button class="btn-start" @onclick="() => ChangeStatus(task)">Начать</button>
+        }
+        else if (status == Status.InProgress)
+        {
+            <button class="btn-complete" @onclick="() => CompleteTask(task)">Завершить</button>
+        }
+        else
+        {
+            <button class="btn-completed" disabled>Завершено</button>
+        }
+        }
+        else
+        {
+            <button class="btn-completed" disabled>Недоступно</button>
+        }
+        </div>
+
+        <p class="description">Описание: @task.Description</p>
+        <p class="task-date">Создано: @task.CreatedAt.ToString("dd MMM", new System.Globalization.CultureInfo("ru-RU"))</p>
+
+        @if (task.ClosedAt != null)
+    {
+        <p class="task-date">Завершено: @task.ClosedAt?.ToString("dd MMM", new System.Globalization.CultureInfo("ru-RU"))</p>
+    }
+
+        @if (task.Comments?.Count > 0)
+    {
+        <button @onclick="() => ToggleComments(task.TaskItemId)" class="expand-comments-section">
+            @(expandedComments.Contains(task.TaskItemId)
+        ? $"Скрыть комментарии ({task.Comments.Count})"
+        : $"Посмотреть комментарии ({task.Comments.Count})")
+        </button>
+
+        @if (expandedComments.Contains(task.TaskItemId))
+    {
+        <div class="comments">
+            @foreach (var comment in task.Comments)
+        {
+            <div class="comment">
+                <p><b>@comment.User?.FirstName @comment.User?.LastName</b>, @comment.CreatedAt.ToString("dd MMM", new System.Globalization.CultureInfo("ru-RU"))</p>
+                <p>@comment.Text</p>
+            </div>
+        }
+
+            @if (activeCommentTaskId != task.TaskItemId)
+        {
+            <button class="btn-add-comment" @onclick="() => ShowCommentInput(task.TaskItemId)">Добавить комментарий</button>
+        }
+
+            @if (activeCommentTaskId == task.TaskItemId)
+        {
+            <div class="add-comment">
+                <textarea @bind="newCommentText" placeholder="Добавьте комментарий..."></textarea>
+                <button @onclick="() => AddComment(task.TaskItemId)" class="save-message">Сохранить</button>
+                @if (!string.IsNullOrEmpty(commentError))
+            {
+                <p style="color:red">@commentError</p>
+            }
+            </div>
+        }
+        </div>
+    }
+    }
+    else
+    {
+        @if (activeCommentTaskId != task.TaskItemId)
+    {
+        <button class="btn-add-comment" @onclick="() => ShowCommentInput(task.TaskItemId)">Добавить комментарий</button>
+    }
+
+        @if (activeCommentTaskId == task.TaskItemId)
+    {
+        <div class="add-comment">
+            <textarea @bind="newCommentText" placeholder="Добавьте комментарий..."></textarea>
+            <button @onclick="() => AddComment(task.TaskItemId)" class="save-message">Сохранить</button>
+            @if (!string.IsNullOrEmpty(commentError))
+        {
+            <p style="color:red">@commentError</p>
+        }
+        </div>
+    }
+    }
+    </div>;
+>>>>>>> Stashed changes
 
     protected override async Task OnInitializedAsync()
     {
@@ -97,8 +281,80 @@ else
             dbContext.Tasks.Add(task);
             await dbContext.SaveChangesAsync();
 
+<<<<<<< Updated upstream
             message = "Задача добавлена!";
             task = new TaskItem();
+=======
+    private async Task CompleteTask(TaskItem task)
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null) return;
+
+        try
+        {
+            await TaskService.ChangeStatusAsync(task, userId.Value);
+            await TaskService.SetCloseDateAsync(task, userId.Value);
+            await LoadTasks();
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            loadError = ex.Message;
+        }
+        catch (Exception ex)
+        {
+            loadError = "Ошибка завершения задачи: " + ex.Message;
+        }
+    }
+
+    private async Task OnTaskDrop(DragEventArgs e, Status newStatus)
+        {
+        var task = tasks.FirstOrDefault(t => t.TaskItemId == draggedTaskId);
+        if (task == null || task.Status == newStatus) return;
+
+        task.Status = newStatus;
+
+        try
+        {
+            await TaskService.UpdateTaskStatusAsync(task.TaskItemId, newStatus);
+            await LoadTasks();
+        }
+        catch (Exception ex)
+        {
+            loadError = "Ошибка перемещения задачи: " + ex.Message;
+        }
+        }
+
+    private async Task AddComment(int taskId)
+    {
+        commentError = null;
+        var userId = GetCurrentUserId();
+
+        if (userId == null)
+        {
+            commentError = "Пользователь не авторизован.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(newCommentText))
+        {
+            commentError = "Комментарий не может быть пустым.";
+            return;
+        }
+
+        try
+        {
+            var comment = new Comment
+                {
+                    Text = newCommentText,
+                    TaskItemId = taskId,
+                    UserId = userId.Value,
+                    CreatedAt = DateTime.Now,
+                };
+
+            await TaskService.AddCommentAsync(comment);
+            newCommentText = "";
+            activeCommentTaskId = null;
+>>>>>>> Stashed changes
 
             await LoadTasks();
         }
@@ -107,4 +363,17 @@ else
             addTaskError = $"Ошибка: {ex.Message}";
         }
     }
+<<<<<<< Updated upstream
+=======
+
+    private int? GetCurrentUserId() => Auth.IsAuthenticated ? Auth.UserId : null;
+
+    private void ShowCommentInput(int taskId)
+        {
+            activeCommentTaskId = taskId;
+            newCommentText = "";
+            commentError = null;
+        }
+
+>>>>>>> Stashed changes
 }
