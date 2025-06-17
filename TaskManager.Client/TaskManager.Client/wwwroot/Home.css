@@ -65,12 +65,12 @@ p {
 .btn-add-task {
     background-image: linear-gradient(70deg, #1F4866 0%, #3A7CA5 70%);
     color: white;
-    padding: 10px 10px 10px;
+    padding: 5px 5px 5px 5px;
     border: none;
     border-radius: 8px;
     font-weight: 400;
     cursor: pointer;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
 }
 
     .btn-add-task:hover {
@@ -280,4 +280,14 @@ p {
     }
 .task-header-own {
     border: 5px solid #678785;
+}
+.task-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.task-column-title{
+    margin: 10px;
 }

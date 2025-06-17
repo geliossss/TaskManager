@@ -14,9 +14,9 @@
 @inject NavigationManager Nav
 @inject TaskService TaskService
 
-<h3>Задачи</h3>
+<h3>С возвращением, @Auth.UserName!</h3>
 
-<button class="btn-add-task" @onclick="ToggleAddForm">Добавить задачу</button>
+
 
 @if (loadError != null)
 {
@@ -73,6 +73,7 @@
     }
     private int draggedTaskId;
 
+
     private void OnDragStart(DragEventArgs e, int taskId)
     {
         draggedTaskId = taskId;
@@ -107,7 +108,14 @@
 
     private RenderFragment RenderTaskColumn(string title, Status status) => @<div class="task-column" ondragover="event.preventDefault()"
                                                                                       @ondrop="@((e) => OnTaskDrop(e, status))">
-        <h3>@title</h3>
+
+        <div class="task-header-row">
+            <h3 class="task-column-title">@title</h3>
+            @if(@title == "Созданы"){
+            <button class="btn-add-task" @onclick="ToggleAddForm">  +  </button>
+            }
+        </div>                                                                         
+        
 
         @{
         var filteredTasks = tasks.Where(t => t.Status == status).ToList();
