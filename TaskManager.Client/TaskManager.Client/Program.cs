@@ -31,6 +31,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<TaskService>();
+builder.Services.AddScoped<CommentService>();
 
 
 var app = builder.Build();
