@@ -13,6 +13,16 @@
 
 <div style="display: flex; justify-content: space-between; width: 100%;">
 <h3>С возвращением, @Auth.UserName!</h3>
+    <div class="sort-controls">
+        <label for="sort-select">Сортировка:</label>
+        <select id="sort-select" @bind="currentSortOption">
+            <option value="default">По умолчанию</option>
+            <option value="creation_desc">Сначала новые</option>
+            <option value="creation_asc">Сначала старые</option>
+            <option value="author_asc">Авторы (А-Я)</option>
+            <option value="author_desc">Авторы (Я-А)</option>
+        </select>
+    </div>
 <button @onclick="ToggleDrag" class="btn-add-task">@((dragEnabled) ? "Отключить перетаскивание" : "Включить перетаскивание")</button>
 </div>
 
@@ -40,7 +50,7 @@
                 <p style="color:red">@addTaskError</p>
             }
 
-            <button @onclick="AddTask">Сохранить</button>
+            <button @onclick="AddTask" class="save-message">Сохранить</button>
             <button @onclick="ToggleAddForm">Отмена</button>
         </div>
     </div>
@@ -101,6 +111,8 @@
         addTaskError = null;
     }
 
+    private string currentSortOption = "default";
+
     private RenderFragment RenderTaskColumn(string title, Status status) => @<div class="task-column" ondragover="event.preventDefault()"
                                                                                       @ondrop="@((e) => OnTaskDrop(e, status))">
         <div class="task-header-row">
@@ -112,21 +124,59 @@
         </div>
 
         @{
+    var currentUserId = GetCurrentUserId();
     var filteredTasks = tasks.Where(t => t.Status == status).ToList();
+
+    switch (currentSortOption)
+    {
+    case "creation_desc":
+    filteredTasks = filteredTasks
+    .OrderByDescending(t => t.CreatedAt)
+    .ToList();
+    break;
+
+    case "creation_asc":
+    filteredTasks = filteredTasks
+    .OrderBy(t => t.CreatedAt)
+    .ToList();
+    break;
+
+    case "author_asc":
+    filteredTasks = filteredTasks
+    .OrderBy(item => item.User?.LastName ?? string.Empty)
+    .ThenBy(item => item.User?.FirstName ?? string.Empty)
+    .ToList();
+    break;
+
+    case "author_desc":
+    filteredTasks = filteredTasks
+    .OrderByDescending(item => item.User?.LastName ?? string.Empty)
+    .ThenByDescending(item => item.User?.FirstName ?? string.Empty)
+    .ToList();
+    break;
+
+    default: 
+    filteredTasks = filteredTasks
+    .OrderByDescending(t => t.UserId == currentUserId)
+    .ThenByDescending(t => t.CreatedAt)
+    .ThenBy(t => t.UserId)
+    .ToList();
+    break;
+    }
+
     if (!filteredTasks.Any())
     {
             <p>Задач нет</p>
     }
     else
     {
-            @foreach (var task in filteredTasks)
+    foreach (var task in filteredTasks)
     {
-            <div class="@(task.UserId == GetCurrentUserId() ? "task task-header-own" : "task")"
-                 draggable="@((task.UserId == GetCurrentUserId() && dragEnabled)  ? "true" : "false")"
+            <div class="@(task.UserId == currentUserId ? "task task-header-own" : "task")"
+                 draggable="@((task.UserId == currentUserId && dragEnabled)  ? "true" : "false")"
                  @ondragstart="@(e => OnDragStart(e, task.TaskItemId))">
                 @RenderTaskContent(task, status)
             </div>
-
     }
     }
         }
@@ -284,7 +334,7 @@
         <div class="task-header">
             <div class="task-info">
                 <p class="task-date">
-                    @task.User?.FirstName @task.User?.LastName<br />
+                    @task.User?.LastName @task.User?.FirstName<br />
                 </p>
             </div>
             @if (task.UserId == GetCurrentUserId())
@@ -334,7 +384,7 @@
             @foreach (var comment in task.Comments)
         {
             <div class="comment">
-                <p><b>@comment.User?.FirstName @comment.User?.LastName</b>, @comment.CreatedAt.ToString("dd MMM HH:mm", new System.Globalization.CultureInfo("ru-RU"))</p>
+                <p><b>@comment.User?.LastName @comment.User?.FirstName</b>, @comment.CreatedAt.ToString("dd MMM HH:mm", new System.Globalization.CultureInfo("ru-RU"))</p>
                 <p>@comment.Text</p>
             </div>
         }

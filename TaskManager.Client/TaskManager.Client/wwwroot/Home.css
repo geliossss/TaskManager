@@ -63,7 +63,7 @@ p {
 
 
 .btn-add-task {
-    background-image: linear-gradient(70deg, #1F4866 0%, #3A7CA5 70%);
+    background: #3A7CA5;
     color: white;
     padding: 5px 5px 5px 5px;
     border: none;
@@ -74,7 +74,7 @@ p {
 }
 
     .btn-add-task:hover {
-        background-image: linear-gradient(70deg, #32658F 0%, #4A89B0 70%);
+        background: #4A89B0;
     }
 
     .btn-add-task:active {
@@ -83,7 +83,7 @@ p {
 
 
 .btn-start {
-    background-image: linear-gradient(70deg, #2E613A 0%, #1F4866 70%);
+    background: #2E613A;
     color: white;
     padding: 3px 10px;
     border: none;
@@ -93,7 +93,7 @@ p {
 }
 
     .btn-start:hover {
-        background-image: linear-gradient(70deg, #4F8F5A 0%, #346F99 70%);
+        background: #4F8F5A;
     }
 
     .btn-start:active {
@@ -101,7 +101,7 @@ p {
     }
 
 .btn-complete {
-    background-image: linear-gradient(70deg, #997746 0%, #731818 70%);
+    background: #731818;
     color: white;
     padding: 3px 10px;
     border: none;
@@ -111,8 +111,10 @@ p {
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+
+
     .btn-complete:hover {
-        background-image: linear-gradient(70deg, #B8915A 0%, #B04343 70%);
+        background: #B04343;
     }
 
     .btn-complete:active {
@@ -132,7 +134,7 @@ p {
 
 
 .btn-add-comment {
-    background-image: linear-gradient(70deg, #515E29 0%, #2A6B66 70%);
+    background: #2A6B66;
     color: white;
     padding: 6px 14px;
     border: none;
@@ -142,7 +144,7 @@ p {
 }
 
     .btn-add-comment:hover {
-        background-image: linear-gradient(70deg, #6F8235 0%, #428F8E 70%);
+        background: #428F8E;
     }
 
     .btn-add-comment:active {
@@ -199,7 +201,7 @@ p {
 }
 
 .save-message {
-    background-image: linear-gradient(70deg, #788F51 0%, #4A8739 70%);
+    background: #788F51;
     color: white;
     padding: 6px 14px;
     border: none;
@@ -209,7 +211,7 @@ p {
 }
 
     .save-message:hover {
-        background-image: linear-gradient(70deg, #A4C270 0%, #67B851 70%);
+        background: #A4C270;
     }
 
     .save-message:active {
@@ -240,7 +242,7 @@ p {
 }
 
 .btn-delete {
-    background-image: linear-gradient(70deg, #B02E2E 0%, #99632C 70%);
+    background: #B02E2E;
     border: none;
     color: white;
     cursor: pointer;
@@ -252,7 +254,7 @@ p {
 }
 
     .btn-delete:hover {
-        background-image: linear-gradient(70deg, #BA4747 0%, #BA834C 70%);
+        background: #BA4747;
     }
 
 .description {
@@ -262,7 +264,7 @@ p {
 }
 
 .expand-comments-section {
-    background-image: linear-gradient(70deg, #736336 0%, #5B6B2A 70%);
+    background: #2A6B66;
     color: white;
     padding: 6px 14px;
     border: none;
@@ -273,7 +275,7 @@ p {
 }
 
     .expand-comments-section:hover {
-        background-image: linear-gradient(70deg, #B09856 0%, #869E3E 70%);
+        background: #428F8E;
     }
 
     .expand-comments-section:active {
@@ -291,3 +293,31 @@ p {
 .task-column-title{
     margin: 10px;
 }
+
+
+.sort-controls {
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+}
+
+    .sort-controls label {
+        margin-right: 10px;
+        font-weight: bold;
+    }
+
+#sort-select {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+    #sort-select:hover {
+        border-color: #3498db;
+        outline: none;
+    }
