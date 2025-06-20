@@ -1,10 +1,3 @@
 bin/
 obj/
 .vs/
-TaskManager.Data/TaskManager.Data/taskmanager.db
-TaskManager.Data/TaskManager.Data/taskmanager.db-shm
-<<<<<<< HEAD
-TaskManager.Data/TaskManager.Data/taskmanager.db-wal
-=======
-TaskManager.Data/TaskManager.Data/taskmanager.db-wal
->>>>>>> dafa4ed69f7092660750358fb2d04b1adb82abb3
