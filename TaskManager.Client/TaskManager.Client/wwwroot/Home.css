@@ -19,7 +19,7 @@
     border: 3px solid #678785;
     border-radius: 6px;
     background-image: linear-gradient(70deg, #C5F0D4 0%, #DAE2ED 70%);
-    font-size: 1.2rem;
+    font-size: 1rem;
 }
 
 p {
@@ -29,11 +29,12 @@ p {
 .task-date {
     font-size: 1.1rem;
     color: #5E7575;
+    margin-bottom: 5px;
 }
 
 .comment {
-    margin-bottom: 10px;
-    padding: 10px;
+    margin-bottom: 5px;
+    padding: 5px;
     border: 1px solid #ddd;
     border-radius: 6px;
     background-color: #fff;
@@ -70,7 +71,7 @@ p {
     border-radius: 8px;
     font-weight: 400;
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
 }
 
     .btn-add-task:hover {
@@ -185,8 +186,6 @@ p {
     align-items: center;
     gap: 10px;
     justify-content: space-between;
-    padding-bottom: 5px;
-    ;
 }
 
 .task-title {
@@ -258,7 +257,7 @@ p {
     }
 
 .description {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     font-weight: 500;
     margin-bottom: 5px;
 }
@@ -266,12 +265,12 @@ p {
 .expand-comments-section {
     background: #2A6B66;
     color: white;
-    padding: 6px 14px;
+    padding: 6px 10px;
     border: none;
     border-radius: 6px;
     font-weight: 400;
     cursor: pointer;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
     .expand-comments-section:hover {
@@ -321,3 +320,79 @@ p {
         border-color: #3498db;
         outline: none;
     }
+
+.modal-overlay {
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(3px);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-window {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 500px;
+    padding: 25px;
+    animation: slideUp 0.3s ease;
+}
+
+    .modal-window h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+        color: #2c3e50;
+        text-align: center;
+    }
+
+    .modal-window input {
+        width: 100%;
+        padding: 12px 15px;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+        .modal-window input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        .modal-window input::placeholder {
+            color: #95a5a6;
+        }
+
+    .modal-window button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+
+        .modal-window button.save-message {
+            background-color: #3A7CA5;
+            color: white;
+        }
+
+            .modal-window button.save-message:hover {
+                background-color: #4A89B0;
+            }
+
+        .modal-window button:not(.save-message) {
+            background-color: #f1f1f1;
+            color: #333;
+        }
+
+            .modal-window button:not(.save-message):hover {
+                background-color: #e0e0e0;
+            }

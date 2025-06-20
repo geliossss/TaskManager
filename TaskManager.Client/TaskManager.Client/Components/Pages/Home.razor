@@ -374,7 +374,7 @@
     {
         <button @onclick="() => ToggleComments(task.TaskItemId)" class="expand-comments-section">
             @(expandedComments.Contains(task.TaskItemId)
-        ? $"Скрыть комментарии ({task.Comments.Count})"
+        ? $"Скрыть комментарии"
         : $"Посмотреть комментарии ({task.Comments.Count})")
         </button>
 
@@ -412,8 +412,17 @@
     {
         @if (activeCommentTaskId != task.TaskItemId)
     {
-        <button class="btn-add-comment" @onclick="() => ShowCommentInput(task.TaskItemId)">Добавить комментарий</button>
+        <button class="btn-add-comment" @onclick="() => ShowCommentInput(task.TaskItemId)">
+            Добавить комментарий
+        </button>
     }
+    else
+    {
+        <button class="btn-add-comment" @onclick="HideCommentInput">
+            Закрыть
+        </button>
+    }
+        
 
         @if (activeCommentTaskId == task.TaskItemId)
     {
@@ -428,4 +437,11 @@
     }
     }
     </div>;
+
+   
+
+    private void HideCommentInput()
+    {
+        activeCommentTaskId = null;
+    }
 }
