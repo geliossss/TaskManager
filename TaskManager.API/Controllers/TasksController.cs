@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TaskManager.Data;
 using TaskManager.Domain.Models;
 using Status = TaskManager.Domain.Models.TaskStatus;
@@ -30,6 +31,36 @@ namespace TaskManager.API.Controllers
 
             return Ok(task);
         }
+
+        [HttpGet("filter")]
+        public async Task<IActionResult> GetFilteredTasks(
+            [FromQuery] Status? status,
+            [FromQuery] string? author,
+            [FromQuery] DateTime? startDate,
+            [FromQuery] DateTime? endDate)
+        {
+            var query = _dbContext.Tasks
+                .Include(t => t.User)
+                .Include(t => t.Comments)
+                .ThenInclude(c => c.User)
+                .AsQueryable();
+
+            if (status.HasValue)
+                query = query.Where(t => t.Status == status.Value);
+
+            if (!string.IsNullOrWhiteSpace(author))
+                query = query.Where(t => (t.User.FirstName + " " + t.User.LastName).Contains(author));
+
+            if (startDate.HasValue)
+                query = query.Where(t => t.CreatedAt >= startDate.Value);
+
+            if (endDate.HasValue)
+                query = query.Where(t => t.CreatedAt <= endDate.Value);
+
+            var result = await query.ToListAsync();
+            return Ok(result);
+        }
+
 
     }
 

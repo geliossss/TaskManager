@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TaskManager.Data;
 using TaskManager.Domain.Models;
@@ -20,6 +21,44 @@ namespace TaskManager.Client.Services
         public async Task<List<TaskItem>> GetTasksAsync()
         {
             return await dbContext.Tasks
+                .Include(t => t.User)
+                .Include(t => t.Comments)
+                .ThenInclude(c => c.User)
+                .ToListAsync();
+        }
+
+        public async Task<List<TaskItem>> GetFilteredTasksAsync(string status, string author, DateTime? startDate, DateTime? endDate)
+        {
+            var query = dbContext.Tasks.AsQueryable();
+
+            // Фильтрация по статусу
+            if (!string.IsNullOrEmpty(status) && status != "all")
+            {
+                if (Enum.TryParse(status, out Status taskStatus))
+                {
+                    query = query.Where(t => t.Status == taskStatus);
+                }
+            }
+
+            // Фильтрация по автору
+            if (!string.IsNullOrEmpty(author))
+            {
+                query = query.Where(t => t.User.LastName.Contains(author) || t.User.FirstName.Contains(author));
+            }
+
+            // Фильтрация по дате начала
+            if (startDate.HasValue)
+            {
+                query = query.Where(t => t.CreatedAt >= startDate.Value);
+            }
+
+            // Фильтрация по дате окончания
+            if (endDate.HasValue)
+            {
+                query = query.Where(t => t.CreatedAt <= endDate.Value);
+            }
+
+            return await query
                 .Include(t => t.User)
                 .Include(t => t.Comments)
                 .ThenInclude(c => c.User)

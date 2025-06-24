@@ -12,8 +12,12 @@
 @inject TaskService TaskService
 
 <link rel="stylesheet" href="Home.css" />
-<div style="display: flex; justify-content: space-between; width: 100%;">
-<h3>С возвращением, @Auth.UserName!</h3>
+
+<div class="controls-container">
+    <!-- Кнопка для открытия модального окна фильтров -->
+    <button class="btn-add-task" @onclick="ToggleFilterModal">Фильтры</button>
+
+    <!-- Блок сортировки -->
     <div class="sort-controls">
         <label for="sort-select">Сортировка:</label>
         <select id="sort-select" @bind="currentSortOption">
@@ -24,12 +28,14 @@
             <option value="author_desc">Авторы (Я-А)</option>
         </select>
     </div>
-<button @onclick="ToggleDrag" class="btn-add-task">@((dragEnabled) ? "Отключить перетаскивание" : "Включить перетаскивание")</button>
+
+    <!-- Кнопка включения/выключения перетаскивания -->
+    <button @onclick="ToggleDrag" class="btn-add-task">@((dragEnabled) ? "Отключить перетаскивание" : "Включить перетаскивание")</button>
 </div>
 
 @if (loadError != null)
 {
-    <p style="color:red">@loadError</p>
+        <p style="color:red">@loadError</p>
 }
 
 <div class="task-columns">
@@ -38,28 +44,69 @@
     @RenderTaskColumn("Выполнены", Status.Completed)
 </div>
 
+<!-- Модальное окно для фильтров -->
+@if (showFilterModal)
+{
+        <div class="modal-overlay" @onclick="ToggleFilterModal">
+            <div class="modal-window" @onclick:stopPropagation="true">
+                <h3>Настройки фильтров</h3>
+
+                <div class="filter-controls">
+                    <label for="status-filter">Статус:</label>
+                    <select id="status-filter" @bind="currentStatusFilter">
+                        <option value="all">Все</option>
+                        <option value="Created">Созданы</option>
+                        <option value="InProgress">В работе</option>
+                        <option value="Completed">Выполнены</option>
+                    </select>
+                </div>
+
+                <div class="filter-controls">
+                    <label for="start-date">Дата начала:</label>
+                    <input type="date" id="start-date" @bind="currentStartDate" />
+                </div>
+
+                <div class="filter-controls">
+                    <label for="end-date">Дата окончания:</label>
+                    <input type="date" id="end-date" @bind="currentEndDate" />
+                </div>
+
+                <div class="filter-controls">
+                    <label for="author-filter">Автор:</label>
+                    <input type="text" id="author-filter" @bind="currentAuthorFilter" placeholder="Фильтровать по автору"/>
+                </div>
+
+                <div class="modal-footer">
+                    <button @onclick="ApplyFilters" class="save-message">Применить фильтры</button>
+                    <button @onclick="ToggleFilterModal" class="cancel-button">Отмена</button>
+                </div>
+            </div>
+        </div>
+}
+
 @if (showAddForm)
 {
-    <div class="modal-overlay" @onclick="ToggleAddForm">
-        <div class="modal-window" @onclick:stopPropagation="true">
-            <h3>Добавить задачу</h3>
-            <input placeholder="Название" @bind="task.Title" />
-            <input placeholder="Описание" @bind="task.Description" />
+        <div class="modal-overlay" @onclick="ToggleAddForm">
+            <div class="modal-window" @onclick:stopPropagation="true">
+                <h3>Добавить задачу</h3>
+                <input placeholder="Название" @bind="task.Title" />
+                <input placeholder="Описание" @bind="task.Description" />
 
             @if (!string.IsNullOrEmpty(addTaskError))
             {
-                <p style="color:red">@addTaskError</p>
+                        <p style="color:red">@addTaskError</p>
             }
 
-            <button @onclick="AddTask" class="save-message">Сохранить</button>
-            <button @onclick="ToggleAddForm">Отмена</button>
+                <button @onclick="AddTask" class="save-message">Сохранить</button>
+                <button @onclick="ToggleAddForm">Отмена</button>
+            </div>
         </div>
-    </div>
 }
 
 @code {
     private TaskItem task = new();
     private bool showAddForm = false;
+    private bool showFilterModal = false; // Модальное окно для фильтров
     private string? loadError;
     private string? addTaskError;
     private int? activeCommentTaskId = null;
@@ -71,11 +118,16 @@
 
     private bool dragEnabled = true;
 
+    private string currentSortOption = "default";
+    private string currentStatusFilter = "all";
+    private string currentAuthorFilter = "";
+    private DateTime? currentStartDate = null;
+    private DateTime? currentEndDate = null;
+
     private void ToggleDrag()
     {
         dragEnabled = !dragEnabled;
     }
-
 
     private void ToggleComments(int taskId)
     {
@@ -112,76 +164,84 @@
         addTaskError = null;
     }
 
-    private string currentSortOption = "default";
+    private void ToggleFilterModal()
+    {
+        showFilterModal = !showFilterModal;
+    }
+
+    private async Task ApplyFilters()
+    {
+        await LoadFilteredTasks();
+        ToggleFilterModal(); // Закрыть модальное окно после применения фильтров
+    }
+
+    private async Task LoadFilteredTasks()
+    {
+        tasks = await TaskService.GetFilteredTasksAsync(currentStatusFilter, currentAuthorFilter, currentStartDate, currentEndDate);
+        loadError = null;
+    }
 
     private RenderFragment RenderTaskColumn(string title, Status status) => @<div class="task-column" ondragover="event.preventDefault()"
-                                                                                      @ondrop="@((e) => OnTaskDrop(e, status))">
-        <div class="task-header-row">
-            <h3 class="task-column-title">@title</h3>
-            @if (@title == "Созданы")
+                                                                                              @ondrop="@((e) => OnTaskDrop(e, status))">
+                <div class="task-header-row">
+                    <h3 class="task-column-title">@title</h3>
+                    @if (@title == "Созданы")
         {
-            <button class="btn-add-task" @onclick="ToggleAddForm">+</button>
+                    <button class="btn-add-task" @onclick="ToggleAddForm">+</button>
         }
-        </div>
+                </div>
 
-        @{
-    var currentUserId = GetCurrentUserId();
-    var filteredTasks = tasks.Where(t => t.Status == status).ToList();
+                @{
+            var currentUserId = GetCurrentUserId();
+            var filteredTasks = tasks.Where(t => t.Status == status).ToList();
 
-    switch (currentSortOption)
-    {
-    case "creation_desc":
-    filteredTasks = filteredTasks
-    .OrderByDescending(t => t.CreatedAt)
-    .ToList();
-    break;
+            switch (currentSortOption)
+            {
+                case "creation_desc":
+                    filteredTasks = filteredTasks.OrderByDescending(t => t.CreatedAt).ToList();
+                    break;
 
-    case "creation_asc":
-    filteredTasks = filteredTasks
-    .OrderBy(t => t.CreatedAt)
-    .ToList();
-    break;
+                case "creation_asc":
+                    filteredTasks = filteredTasks.OrderBy(t => t.CreatedAt).ToList();
+                    break;
 
-    case "author_asc":
-    filteredTasks = filteredTasks
-    .OrderBy(item => item.User?.LastName ?? string.Empty)
-    .ThenBy(item => item.User?.FirstName ?? string.Empty)
-    .ToList();
-    break;
+                case "author_asc":
+                    filteredTasks = filteredTasks.OrderBy(item => item.User?.LastName ?? string.Empty)
+                                                 .ThenBy(item => item.User?.FirstName ?? string.Empty)
+                                                 .ToList();
+                    break;
 
-    case "author_desc":
-    filteredTasks = filteredTasks
-    .OrderByDescending(item => item.User?.LastName ?? string.Empty)
-    .ThenByDescending(item => item.User?.FirstName ?? string.Empty)
-    .ToList();
-    break;
+                case "author_desc":
+                    filteredTasks = filteredTasks.OrderByDescending(item => item.User?.LastName ?? string.Empty)
+                                                 .ThenByDescending(item => item.User?.FirstName ?? string.Empty)
+                                                 .ToList();
+                    break;
 
-    default: 
-    filteredTasks = filteredTasks
-    .OrderByDescending(t => t.UserId == currentUserId)
-    .ThenByDescending(t => t.CreatedAt)
-    .ThenBy(t => t.UserId)
-    .ToList();
-    break;
-    }
+                default:
+                    filteredTasks = filteredTasks.OrderByDescending(t => t.UserId == currentUserId)
+                                                 .ThenByDescending(t => t.CreatedAt)
+                                                 .ThenBy(t => t.UserId)
+                                                 .ToList();
+                    break;
+            }
 
-    if (!filteredTasks.Any())
-    {
-            <p>Задач нет</p>
-    }
-    else
-    {
-    foreach (var task in filteredTasks)
-    {
-            <div class="@(task.UserId == currentUserId ? "task task-header-own" : "task")"
-                 draggable="@((task.UserId == currentUserId && dragEnabled)  ? "true" : "false")"
-                 @ondragstart="@(e => OnDragStart(e, task.TaskItemId))">
-                @RenderTaskContent(task, status)
-            </div>
-    }
-    }
-        }
-    </div>;
+            if (!filteredTasks.Any())
+            {
+                                <p>Задач нет</p>
+            }
+            else
+            {
+                foreach (var task in filteredTasks)
+                {
+                                    <div class="@(task.UserId == currentUserId ? "task task-header-own" : "task")"
+                                         draggable="@((task.UserId == currentUserId && dragEnabled) ? "true" : "false")"
+                                         @ondragstart="@(e => OnDragStart(e, task.TaskItemId))">
+                                        @RenderTaskContent(task, status)
+                                    </div>
+                }
+            }
+                }
+            </div>;
 
     protected override async Task OnInitializedAsync()
     {
@@ -190,7 +250,7 @@
             Nav.NavigateTo("/login");
             return;
         }
-        await LoadTasks();
+        await LoadFilteredTasks();
     }
 
     private async Task LoadTasks()
@@ -332,114 +392,112 @@
     private IJSRuntime JsRuntime { get; set; }
 
     private RenderFragment RenderTaskContent(TaskItem task, Status status) => @<div>
-        <div class="task-header">
-            <div class="task-info">
-                <p class="task-date">
-                    @task.User?.LastName @task.User?.FirstName<br />
-                </p>
-            </div>
-            @if (task.UserId == GetCurrentUserId())
+                <div class="task-header">
+                    <div class="task-info">
+                        <p class="task-date">
+                            @task.User?.LastName @task.User?.FirstName<br />
+                        </p>
+                    </div>
+                    @if (task.UserId == GetCurrentUserId())
         {
-            <button class="btn-delete" @onclick="() => ConfirmDelete(task)">Х</button>
+                    <button class="btn-delete" @onclick="() => ConfirmDelete(task)">Х</button>
         }
-        </div>
+                </div>
 
-        <div class="task-header">
-            <p class="task-title">@task.Title</p>
-            @if (task.UserId == GetCurrentUserId())
+                <div class="task-header">
+                    <p class="task-title">@task.Title</p>
+                    @if (task.UserId == GetCurrentUserId())
         {
         if (status == Status.Created)
         {
-            <button class="btn-start" @onclick="() => ChangeStatus(task)">Начать</button>
+                    <button class="btn-start" @onclick="() => ChangeStatus(task)">Начать</button>
         }
         else if (status == Status.InProgress)
         {
-            <button class="btn-complete" @onclick="() => ChangeStatus(task)">Завершить</button>
+                    <button class="btn-complete" @onclick="() => ChangeStatus(task)">Завершить</button>
         }
         else
         {
-            <button class="btn-completed" disabled>Завершено</button>
+                    <button class="btn-completed" disabled>Завершено</button>
         }
         }
-        </div>
+                </div>
 
-        <p class="description">Описание: @task.Description</p>
-        <p class="task-date">Создано: @task.CreatedAt.ToString("dd MMM HH:mm", new System.Globalization.CultureInfo("ru-RU"))</p>
+                <p class="description">Описание: @task.Description</p>
+                <p class="task-date">Создано: @task.CreatedAt.ToString("dd MMM HH:mm", new System.Globalization.CultureInfo("ru-RU"))</p>
 
-        @if (task.ClosedAt != null)
+                @if (task.ClosedAt != null)
     {
-        <p class="task-date">Завершено: @task.ClosedAt?.ToString("dd MMM HH:mm", new System.Globalization.CultureInfo("ru-RU"))</p>
+                <p class="task-date">Завершено: @task.ClosedAt?.ToString("dd MMM HH:mm", new System.Globalization.CultureInfo("ru-RU"))</p>
     }
 
-        @if (task.Comments?.Count > 0)
+                @if (task.Comments?.Count > 0)
     {
-        <button @onclick="() => ToggleComments(task.TaskItemId)" class="expand-comments-section">
-            @(expandedComments.Contains(task.TaskItemId)
+                <button @onclick="() => ToggleComments(task.TaskItemId)" class="expand-comments-section">
+                    @(expandedComments.Contains(task.TaskItemId)
         ? $"Скрыть комментарии"
         : $"Посмотреть комментарии ({task.Comments.Count})")
-        </button>
+                </button>
 
-        @if (expandedComments.Contains(task.TaskItemId))
+                @if (expandedComments.Contains(task.TaskItemId))
     {
-        <div class="comments">
-            @foreach (var comment in task.Comments)
+                <div class="comments">
+                    @foreach (var comment in task.Comments)
         {
-            <div class="comment">
-                <p><b>@comment.User?.LastName @comment.User?.FirstName</b>, @comment.CreatedAt.ToString("dd MMM HH:mm", new System.Globalization.CultureInfo("ru-RU"))</p>
-                <p>@comment.Text</p>
-            </div>
+                    <div class="comment">
+                        <p><b>@comment.User?.LastName @comment.User?.FirstName</b>, @comment.CreatedAt.ToString("dd MMM HH:mm", new System.Globalization.CultureInfo("ru-RU"))</p>
+                        <p>@comment.Text</p>
+                    </div>
         }
 
-            @if (activeCommentTaskId != task.TaskItemId)
+                    @if (activeCommentTaskId != task.TaskItemId)
         {
-            <button class="btn-add-comment" @onclick="() => ShowCommentInput(task.TaskItemId)">Добавить комментарий</button>
+                    <button class="btn-add-comment" @onclick="() => ShowCommentInput(task.TaskItemId)">Добавить комментарий</button>
         }
 
-            @if (activeCommentTaskId == task.TaskItemId)
+                    @if (activeCommentTaskId == task.TaskItemId)
         {
-            <div class="add-comment">
-                <textarea @bind="newCommentText" placeholder="Добавьте комментарий..."></textarea>
-                <button @onclick="() => AddComment(task.TaskItemId)" class="save-message">Сохранить</button>
-                @if (!string.IsNullOrEmpty(commentError))
+                    <div class="add-comment">
+                        <textarea @bind="newCommentText" placeholder="Добавьте комментарий..."></textarea>
+                        <button @onclick="() => AddComment(task.TaskItemId)" class="save-message">Сохранить</button>
+                        @if (!string.IsNullOrEmpty(commentError))
             {
-                <p style="color:red">@commentError</p>
+                        <p style="color:red">@commentError</p>
             }
-            </div>
+                    </div>
         }
-        </div>
+                </div>
     }
     }
     else
     {
-        @if (activeCommentTaskId != task.TaskItemId)
+                @if (activeCommentTaskId != task.TaskItemId)
     {
-        <button class="btn-add-comment" @onclick="() => ShowCommentInput(task.TaskItemId)">
-            Добавить комментарий
-        </button>
+                <button class="btn-add-comment" @onclick="() => ShowCommentInput(task.TaskItemId)">
+                    Добавить комментарий
+                </button>
     }
     else
     {
-        <button class="btn-add-comment" @onclick="HideCommentInput">
-            Закрыть
-        </button>
+                <button class="btn-add-comment" @onclick="HideCommentInput">
+                    Закрыть
+                </button>
     }
-        
 
-        @if (activeCommentTaskId == task.TaskItemId)
+
+                @if (activeCommentTaskId == task.TaskItemId)
     {
-        <div class="add-comment">
-            <textarea @bind="newCommentText" placeholder="Добавьте комментарий..."></textarea>
-            <button @onclick="() => AddComment(task.TaskItemId)" class="save-message">Сохранить</button>
-            @if (!string.IsNullOrEmpty(commentError))
+                <div class="add-comment">
+                    <textarea @bind="newCommentText" placeholder="Добавьте комментарий..."></textarea>
+                    <button @onclick="() => AddComment(task.TaskItemId)" class="save-message">Сохранить</button>
+                    @if (!string.IsNullOrEmpty(commentError))
         {
-            <p style="color:red">@commentError</p>
+                    <p style="color:red">@commentError</p>
         }
-        </div>
+                </div>
     }
     }
-    </div>;
-
-   
+            </div>;
 
     private void HideCommentInput()
     {

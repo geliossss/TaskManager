@@ -1,4 +1,65 @@
-﻿.task-columns {
+﻿/* Контейнер для фильтров и сортировки */
+.filter-sort-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 900px; /* Ограничение ширины контейнера */
+}
+
+/* Разделение блоков фильтров и сортировки */
+.filter-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-direction: column; /* Фильтры будут располагаться вертикально */
+}
+
+.sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-direction: row; /* Сортировка остается горизонтальной */
+    width: auto; /* Убираем растягивание на всю ширину */
+    max-width: 300px; /* Ограничиваем максимальную ширину */
+    flex-grow: 0; /* Не растягиваемся */
+}
+
+/* Стили для select и input */
+#sort-select,
+#status-filter,
+#start-date,
+#end-date,
+#author-filter {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+/* Кнопка применить фильтры */
+button {
+    padding: 5px 10px;
+    border-radius: 6px;
+    background-color: #3A7CA5;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+    button:hover {
+        background-color: #4A89B0;
+    }
+
+    button:active {
+        transform: translateY(1px);
+    }
+
+/* Основной стиль для колонок задач */
+.task-columns {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
@@ -61,8 +122,7 @@ p {
     box-shadow: 0 0 15px rgba(0,0,0,0.3);
 }
 
-
-
+/* Кнопки */
 .btn-add-task {
     background: #3A7CA5;
     color: white;
@@ -81,7 +141,6 @@ p {
     .btn-add-task:active {
         transform: translateY(1px);
     }
-
 
 .btn-start {
     background: #2E613A;
@@ -112,8 +171,6 @@ p {
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-
-
     .btn-complete:hover {
         background: #B04343;
     }
@@ -131,8 +188,6 @@ p {
     font-weight: 400;
     cursor: default;
 }
-
-
 
 .btn-add-comment {
     background: #2A6B66;
@@ -152,6 +207,7 @@ p {
         background-color: #3A5946;
     }
 
+/* Комментарии */
 .add-comment {
     margin-top: 10px;
 }
@@ -164,7 +220,6 @@ p {
         border: 1px solid #ccc;
         margin-bottom: 5px;
         resize: none;
-        !important;
     }
 
     .add-comment button {
@@ -181,6 +236,7 @@ p {
             background-color: #218838;
         }
 
+/* Заголовки и информация */
 .task-header {
     display: flex;
     align-items: center;
@@ -217,6 +273,7 @@ p {
         background-color: #3A5946;
     }
 
+/* Ввод комментария */
 .comment-input {
     width: 100%;
     min-height: 80px;
@@ -234,12 +291,12 @@ p {
         box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
     }
 
-
 .task-info p {
     margin: 0;
     line-height: 1.2;
 }
 
+/* Удаление задачи */
 .btn-delete {
     background: #B02E2E;
     border: none;
@@ -262,6 +319,7 @@ p {
     margin-bottom: 5px;
 }
 
+/* Кнопка разворачивания комментариев */
 .expand-comments-section {
     background: #2A6B66;
     color: white;
@@ -279,9 +337,12 @@ p {
 
     .expand-comments-section:active {
     }
+
+/* Стили для задач с текущим пользователем */
 .task-header-own {
     border: 5px solid #678785;
 }
+
 .task-header-row {
     display: flex;
     justify-content: space-between;
@@ -289,17 +350,18 @@ p {
     gap: 10px;
 }
 
-.task-column-title{
+.task-column-title {
     margin: 10px;
 }
 
-
+/* Стили для сортировки */
 .sort-controls {
     padding: 10px;
     background-color: #f5f5f5;
     border-radius: 4px;
     display: flex;
     align-items: center;
+    justify-content: flex-end; /* Переместить сортировку вправо */
 }
 
     .sort-controls label {
@@ -310,17 +372,26 @@ p {
 #sort-select {
     border: 1px solid #ddd;
     border-radius: 4px;
-    background-color: white;
+    background-color: #3498db; /* Синий цвет */
+    color: white;
     font-size: 14px;
     cursor: pointer;
     transition: border-color 0.3s;
 }
 
     #sort-select:hover {
-        border-color: #3498db;
+        border-color: #2980b9;
         outline: none;
     }
 
+/* Переместить кнопку "Отключить перетаскивание" в правый угол */
+.filter-sort-container .disable-drag-button {
+    margin-left: auto;
+    background-color: #e74c3c; /* Красная кнопка */
+    color: white;
+}
+
+/* Модальное окно */
 .modal-overlay {
     position: fixed;
     background-color: rgba(0, 0, 0, 0.5);
